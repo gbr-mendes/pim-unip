@@ -1,10 +1,16 @@
 import json
+import os
 from websocket import create_connection
+from dotenv import load_dotenv
+
+load_dotenv()
+
+WEBSOCKET_URL = os.getenv("WEBSOCKET_URL")
 
 def tentar_login(username, password):
     """Envia dados ao servidor e recebe resposta de autenticação"""
     try:
-        ws = create_connection("ws://localhost:8080")
+        ws = create_connection(WEBSOCKET_URL)
         msg = {"action": "login", "username": username, "password": password}
         ws.send(json.dumps(msg))
 
