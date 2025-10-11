@@ -1,24 +1,106 @@
-import time
-import random
+import json
+import os
+from websocket import create_connection
+from dotenv import load_dotenv
+
+load_dotenv()
+
+WEBSOCKET_URL = os.getenv("WEBSOCKET_URL")
+
+# =====================================================
+# === ADMINISTRADORES ================================
+# =====================================================
+
+def cadastrar_admin(nome: str, sobrenome: str, email: str, senha: str, confirme_senha: str):
+    """Cadastra um novo administrador no sistema via WebSocket"""
+    if not nome.strip() or not sobrenome.strip() or not email.strip():
+        return {
+            "status": "error", 
+            "message": "Nome, sobrenome e email são obrigatórios",
+            "clear_form": False
+        }
+
+    if senha != confirme_senha:
+        return {
+            "status": "error", 
+            "message": "Senhas não conferem",
+            "clear_form": False
+        }
+
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "cadastrar_admin",
+            "nome": nome,
+            "sobrenome": sobrenome,
+            "email": email,
+            "senha": senha
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            resposta["clear_form"] = True
+            resposta["message"] = f"Administrador {nome} {sobrenome} cadastrado com sucesso!"
+        else:
+            resposta["clear_form"] = False
+            
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }
 
 # =====================================================
 # === ALUNOS ==========================================
 # =====================================================
 
 def cadastrar_aluno(nome: str, sobrenome: str, email: str, senha: str, confirme_senha: str):
-    """Mock de cadastro de aluno"""
+    """Cadastra um novo aluno no sistema via WebSocket"""
     if not nome.strip() or not sobrenome.strip() or not email.strip():
-        print("Erro: Campos obrigatórios não preenchidos")
-        return {"status": "error", "message": "Nome, sobrenome e email são obrigatórios"}
+        return {
+            "status": "error", 
+            "message": "Nome, sobrenome e email são obrigatórios",
+            "clear_form": False  # Não limpa o form em caso de erro de validação
+        }
 
     if senha != confirme_senha:
-        print("Erro: Senhas não conferem")
-        return {"status": "error", "message": "Senhas não conferem"}
+        return {
+            "status": "error", 
+            "message": "Senhas não conferem",
+            "clear_form": False
+        }
 
-    time.sleep(0.5)
-    id_aluno = random.randint(1000, 9999)
-    print(f"Aluno '{nome} {sobrenome}' cadastrado com sucesso! (ID: {id_aluno})")
-    return {"status": "ok", "message": f"Aluno '{nome} {sobrenome}' cadastrado", "id": id_aluno}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "cadastrar_aluno",
+            "nome": nome,
+            "sobrenome": sobrenome,
+            "email": email,
+            "senha": senha
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            # Adiciona informação para limpar o formulário em caso de sucesso
+            resposta["clear_form"] = True
+            resposta["message"] = f"Aluno {nome} {sobrenome} cadastrado com sucesso!"
+        else:
+            resposta["clear_form"] = False
+        
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }
 
 
 # =====================================================
@@ -26,19 +108,47 @@ def cadastrar_aluno(nome: str, sobrenome: str, email: str, senha: str, confirme_
 # =====================================================
 
 def cadastrar_professor(nome: str, sobrenome: str, email: str, senha: str, confirme_senha: str):
-    """Mock de cadastro de professor"""
+    """Cadastra um novo professor no sistema via WebSocket"""
     if not nome.strip() or not sobrenome.strip() or not email.strip():
-        print("Erro: Campos obrigatórios não preenchidos")
-        return {"status": "error", "message": "Nome, sobrenome e email são obrigatórios"}
+        return {
+            "status": "error", 
+            "message": "Nome, sobrenome e email são obrigatórios",
+            "clear_form": False
+        }
 
     if senha != confirme_senha:
-        print("Erro: Senhas não conferem")
-        return {"status": "error", "message": "Senhas não conferem"}
+        return {
+            "status": "error", 
+            "message": "Senhas não conferem",
+            "clear_form": False
+        }
 
-    time.sleep(0.5)
-    id_prof = random.randint(1000, 9999)
-    print(f"Professor '{nome} {sobrenome}' cadastrado com sucesso! (ID: {id_prof})")
-    return {"status": "ok", "message": f"Professor '{nome} {sobrenome}' cadastrado", "id": id_prof}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "cadastrar_professor",
+            "nome": nome,
+            "sobrenome": sobrenome,
+            "email": email,
+            "senha": senha
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            resposta["clear_form"] = True
+            resposta["message"] = f"Professor {nome} {sobrenome} cadastrado com sucesso!"
+        else:
+            resposta["clear_form"] = False
+            
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }
 
 
 # =====================================================
@@ -46,15 +156,37 @@ def cadastrar_professor(nome: str, sobrenome: str, email: str, senha: str, confi
 # =====================================================
 
 def cadastrar_curso(nome_curso: str):
-    """Mock de cadastro de curso"""
+    """Cadastra um novo curso no sistema via WebSocket"""
     if not nome_curso.strip():
-        print("Erro: Nome do curso não pode ser vazio")
-        return {"status": "error", "message": "Nome do curso é obrigatório"}
+        return {
+            "status": "error", 
+            "message": "Nome do curso é obrigatório",
+            "clear_form": False
+        }
 
-    time.sleep(0.5)
-    id_curso = random.randint(1000, 9999)
-    print(f"Curso '{nome_curso}' cadastrado com sucesso! (ID: {id_curso})")
-    return {"status": "ok", "message": f"Curso '{nome_curso}' cadastrado", "id": id_curso}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "cadastrar_curso",
+            "nome": nome_curso
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            resposta["clear_form"] = True
+            resposta["message"] = f"Curso '{nome_curso}' cadastrado com sucesso!"
+        else:
+            resposta["clear_form"] = False
+            
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }
 
 
 # =====================================================
@@ -62,25 +194,72 @@ def cadastrar_curso(nome_curso: str):
 # =====================================================
 
 def cadastrar_disciplina(nome_disciplina: str):
-    """Mock de cadastro de disciplina"""
+    """Cadastra uma nova disciplina no sistema via WebSocket"""
     if not nome_disciplina.strip():
-        print("Erro: Nome da disciplina não pode ser vazio")
-        return {"status": "error", "message": "Nome da disciplina é obrigatório"}
+        return {
+            "status": "error", 
+            "message": "Nome da disciplina é obrigatório",
+            "clear_form": False
+        }
 
-    time.sleep(0.5)
-    id_disc = random.randint(1000, 9999)
-    print(f"Disciplina '{nome_disciplina}' cadastrada com sucesso! (ID: {id_disc})")
-    return {"status": "ok", "message": f"Disciplina '{nome_disciplina}' cadastrada", "id": id_disc}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "cadastrar_disciplina",
+            "nome": nome_disciplina
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            resposta["clear_form"] = True
+            resposta["message"] = f"Disciplina '{nome_disciplina}' cadastrada com sucesso!"
+        else:
+            resposta["clear_form"] = False
+            
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }
 
 
 def associar_disciplina_curso(id_disciplina: str, id_curso: str):
-    """Mock de associação de disciplina a curso"""
+    """Associa uma disciplina a um curso via WebSocket"""
     if not id_disciplina.strip() or not id_curso.strip():
-        return {"status": "error", "message": "Disciplina e Curso são obrigatórios"}
+        return {
+            "status": "error", 
+            "message": "Disciplina e Curso são obrigatórios",
+            "clear_form": False
+        }
 
-    time.sleep(0.5)
-    print(f"Disciplina {id_disciplina} associada ao curso {id_curso}")
-    return {"status": "ok", "message": f"Disciplina {id_disciplina} associada ao curso {id_curso}"}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "associar_disciplina_curso",
+            "id_disciplina": id_disciplina,
+            "id_curso": id_curso
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            resposta["clear_form"] = True
+            resposta["message"] = "Disciplina associada ao curso com sucesso!"
+        else:
+            resposta["clear_form"] = False
+            
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }
 
 
 # =====================================================
@@ -88,13 +267,28 @@ def associar_disciplina_curso(id_disciplina: str, id_curso: str):
 # =====================================================
 
 def atribuir_professor_disciplina(id_professor: str, id_disciplina: str):
-    """Mock de atribuição de professor a disciplina"""
+    """Atribui um professor a uma disciplina via WebSocket"""
     if not id_professor.strip() or not id_disciplina.strip():
         return {"status": "error", "message": "Professor e Disciplina são obrigatórios"}
 
-    time.sleep(0.5)
-    print(f"Professor {id_professor} atribuído à disciplina {id_disciplina}")
-    return {"status": "ok", "message": f"Professor {id_professor} atribuído à disciplina {id_disciplina}"}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "atribuir_professor_disciplina",
+            "id_professor": id_professor,
+            "id_disciplina": id_disciplina
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        if resposta.get("status") == "ok":
+            resposta["message"] = "Professor atribuído à disciplina com sucesso!"
+            resposta["clear_form"] = True
+        else:
+            resposta["clear_form"] = False
+        return resposta
+    except Exception as e:
+        return {"status": "error", "message": f"Falha de conexão: {e}"}
 
 
 # =====================================================
@@ -102,25 +296,72 @@ def atribuir_professor_disciplina(id_professor: str, id_disciplina: str):
 # =====================================================
 
 def criar_turma(nome_turma: str):
-    """Mock de criação de turma"""
+    """Cria uma nova turma no sistema via WebSocket"""
     if not nome_turma.strip():
-        print("Erro: Nome da turma não pode ser vazio")
-        return {"status": "error", "message": "Nome da turma é obrigatório"}
+        return {
+            "status": "error", 
+            "message": "Nome da turma é obrigatório",
+            "clear_form": False
+        }
 
-    time.sleep(0.5)
-    id_turma = random.randint(1000, 9999)
-    print(f"Turma '{nome_turma}' criada com sucesso! (ID: {id_turma})")
-    return {"status": "ok", "message": f"Turma '{nome_turma}' criada", "id": id_turma}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "criar_turma",
+            "nome": nome_turma
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            resposta["clear_form"] = True
+            resposta["message"] = f"Turma '{nome_turma}' criada com sucesso!"
+        else:
+            resposta["clear_form"] = False
+            
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }
 
 
 def associar_turma_curso(id_turma: str, id_curso: str):
-    """Mock de associação de turma a curso"""
+    """Associa uma turma a um curso via WebSocket"""
     if not id_turma.strip() or not id_curso.strip():
-        return {"status": "error", "message": "Turma e Curso são obrigatórios"}
+        return {
+            "status": "error", 
+            "message": "Turma e Curso são obrigatórios",
+            "clear_form": False
+        }
 
-    time.sleep(0.5)
-    print(f"Turma {id_turma} associada ao curso {id_curso}")
-    return {"status": "ok", "message": f"Turma {id_turma} associada ao curso {id_curso}"}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "associar_turma_curso",
+            "id_turma": id_turma,
+            "id_curso": id_curso
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            resposta["clear_form"] = True
+            resposta["message"] = "Turma associada ao curso com sucesso!"
+        else:
+            resposta["clear_form"] = False
+            
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }
 
 
 # =====================================================
@@ -128,30 +369,105 @@ def associar_turma_curso(id_turma: str, id_curso: str):
 # =====================================================
 
 def atribuir_aluno_turma(id_aluno: str, id_turma: str):
-    """Mock de atribuição de aluno a turma"""
+    """Atribui um aluno a uma turma via WebSocket"""
     if not id_aluno.strip() or not id_turma.strip():
-        return {"status": "error", "message": "Aluno e Turma são obrigatórios"}
+        return {
+            "status": "error", 
+            "message": "Aluno e Turma são obrigatórios",
+            "clear_form": False
+        }
 
-    time.sleep(0.5)
-    print(f"Aluno {id_aluno} atribuído à turma {id_turma}")
-    return {"status": "ok", "message": f"Aluno {id_aluno} atribuído à turma {id_turma}"}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "atribuir_aluno_turma",
+            "id_aluno": id_aluno,
+            "id_turma": id_turma
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            resposta["clear_form"] = True
+            resposta["message"] = "Aluno atribuído à turma com sucesso!"
+        else:
+            resposta["clear_form"] = False
+            
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }
 
 
 def atribuir_materia_professor(id_materia: str, id_professor: str):
-    """Mock antigo (mantido para compatibilidade)"""
+    """Atribui uma matéria a um professor via WebSocket (mantido para compatibilidade)"""
     if not id_materia.strip() or not id_professor.strip():
-        return {"status": "error", "message": "Matéria e Professor são obrigatórios"}
+        return {
+            "status": "error", 
+            "message": "Matéria e Professor são obrigatórios",
+            "clear_form": False
+        }
 
-    time.sleep(0.5)
-    print(f"Matéria {id_materia} atribuída ao professor {id_professor}")
-    return {"status": "ok", "message": f"Matéria {id_materia} atribuída ao professor {id_professor}"}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "atribuir_materia_professor",
+            "id_materia": id_materia,
+            "id_professor": id_professor
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            resposta["clear_form"] = True
+            resposta["message"] = "Matéria atribuída ao professor com sucesso!"
+        else:
+            resposta["clear_form"] = False
+            
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }
 
 
 def associar_disciplina_turma(id_disciplina: str, id_turma: str):
-    """Mock de associação de disciplina à turma"""
+    """Associa uma disciplina a uma turma via WebSocket"""
     if not id_disciplina.strip() or not id_turma.strip():
-        return {"status": "error", "message": "Disciplina e Turma são obrigatórias"}
+        return {
+            "status": "error", 
+            "message": "Disciplina e Turma são obrigatórias",
+            "clear_form": False
+        }
 
-    time.sleep(0.5)
-    print(f"Disciplina {id_disciplina} associada à turma {id_turma}")
-    return {"status": "ok", "message": f"Disciplina {id_disciplina} associada à turma {id_turma}"}
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {
+            "action": "associar_disciplina_turma",
+            "id_disciplina": id_disciplina,
+            "id_turma": id_turma
+        }
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        
+        if resposta.get("status") == "ok":
+            resposta["clear_form"] = True
+            resposta["message"] = "Disciplina associada à turma com sucesso!"
+        else:
+            resposta["clear_form"] = False
+            
+        return resposta
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Falha de conexão: {e}",
+            "clear_form": False
+        }

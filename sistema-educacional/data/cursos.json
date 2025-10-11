@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1000",
+    "nome": "Ci\u00eancia da Computa\u00e7\u00e3o",
+    "disciplinas": []
+  },
+  {
+    "id": "7627",
+    "nome": "An\u00e1lise e Desenvolvimento de Sistemas",
+    "disciplinas": [
+      "9464"
+    ]
+  }
+]

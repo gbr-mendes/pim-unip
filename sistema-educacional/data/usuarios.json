@@ -1,5 +1,34 @@
 [
-  { "username": "gabriel", "password": "1234", "role": "admin" },
-  { "username": "guilherme", "password": "1234", "role": "professor" },
-  { "username": "camilly", "password": "1234", "role": "aluno" }
+  {
+    "username": "gabrielx165@gmail.com",
+    "password": "1234",
+    "nome": "Gabriel",
+    "sobrenome": "Mendes",
+    "role": "admin",
+    "id": "1881"
+  },
+  {
+    "username": "guilherme@email.com",
+    "password": "1234",
+    "nome": "Guilherme",
+    "sobrenome": "Saran",
+    "role": "admin",
+    "id": "1239"
+  },
+  {
+    "username": "cammily@email.com",
+    "password": "1234",
+    "nome": "Cammily",
+    "sobrenome": "Sla",
+    "role": "aluno",
+    "id": "4429"
+  },
+  {
+    "username": "paulo@email.com",
+    "password": "1234",
+    "nome": "Paulo",
+    "sobrenome": "Sla",
+    "role": "aluno",
+    "id": "4027"
+  }
 ]
