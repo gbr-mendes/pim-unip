@@ -38,8 +38,8 @@ def criar_tela_login(root, on_login_sucesso):
     erro = ctk.CTkLabel(container, text="", font=ctk.CTkFont(size=12))
     erro.grid(row=3, column=0, columnspan=2, pady=(10, 0))
 
-    spinner = ctk.CTkLabel(container, text="⏳", font=ctk.CTkFont(size=18))
-    spinner.grid(row=4, column=0, columnspan=2)
+    spinner = ctk.CTkProgressBar(container, mode="indeterminate")
+    spinner.grid(row=4, column=0, columnspan=2, pady=(10, 0))
     spinner.grid_remove()  # escondido no início
 
     btn_entrar = ctk.CTkButton(container, text="Entrar", width=120, height=35)
@@ -47,10 +47,12 @@ def criar_tela_login(root, on_login_sucesso):
 
     def mostrar_spinner():
         spinner.grid()
+        spinner.start()  # inicia a animação
         erro.configure(text="")
         btn_entrar.configure(state="disabled", text="Entrando...")
 
     def esconder_spinner():
+        spinner.stop()  # para a animação
         spinner.grid_remove()
         btn_entrar.configure(state="normal", text="Entrar")
 
