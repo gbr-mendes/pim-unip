@@ -4,8 +4,54 @@ from model.data_access import (
     autenticar_usuario, cadastrar_novo_usuario, cadastrar_novo_curso,
     cadastrar_nova_disciplina, criar_nova_turma, associar_disciplina_curso,
     atribuir_professor_disciplina, associar_turma_curso, atribuir_aluno_turma,
-    atribuir_disciplina_turma
+    atribuir_disciplina_turma, carregar_usuarios, carregar_cursos,
+    carregar_disciplinas, carregar_turmas
 )
+
+def handle_listar_admins(data):
+    usuarios = carregar_usuarios()
+    admins = [u for u in usuarios if u.get("role") == "admin"]
+    return {
+        "status": "ok",
+        "data": [{"id": u["id"], "nome": u["nome"], "sobrenome": u["sobrenome"], "email": u["username"]} for u in admins]
+    }
+
+def handle_listar_alunos(data):
+    usuarios = carregar_usuarios()
+    alunos = [u for u in usuarios if u.get("role") == "aluno"]
+    return {
+        "status": "ok",
+        "data": [{"id": u["id"], "nome": u["nome"], "sobrenome": u["sobrenome"], "email": u["username"]} for u in alunos]
+    }
+
+def handle_listar_professores(data):
+    usuarios = carregar_usuarios()
+    professores = [u for u in usuarios if u.get("role") == "professor"]
+    return {
+        "status": "ok",
+        "data": [{"id": u["id"], "nome": u["nome"], "sobrenome": u["sobrenome"], "email": u["username"]} for u in professores]
+    }
+
+def handle_listar_cursos(data):
+    cursos = carregar_cursos()
+    return {
+        "status": "ok",
+        "data": [{"id": c["id"], "nome": c["nome"], "disciplinas": c["disciplinas"]} for c in cursos]
+    }
+
+def handle_listar_disciplinas(data):
+    disciplinas = carregar_disciplinas()
+    return {
+        "status": "ok",
+        "data": [{"id": d["id"], "nome": d["nome"], "professor_id": d["professor_id"], "curso_id": d["curso_id"]} for d in disciplinas]
+    }
+
+def handle_listar_turmas(data):
+    turmas = carregar_turmas()
+    return {
+        "status": "ok",
+        "data": [{"id": t["id"], "nome": t["nome"], "curso_id": t["curso_id"], "alunos": t["alunos"], "disciplinas": t["disciplinas"]} for t in turmas]
+    }
 
 def handle_login(data):
     user = data["username"]
@@ -116,6 +162,12 @@ action_handlers = {
     "associar_turma_curso": handle_associar_turma_curso,
     "atribuir_aluno_turma": handle_atribuir_aluno_turma,
     "associar_disciplina_turma": handle_associar_disciplina_turma,
+    "listar_admins": handle_listar_admins,
+    "listar_alunos": handle_listar_alunos,
+    "listar_professores": handle_listar_professores,
+    "listar_cursos": handle_listar_cursos,
+    "listar_disciplinas": handle_listar_disciplinas,
+    "listar_turmas": handle_listar_turmas,
 }
 
 def receber_mensagem(client, server, message):

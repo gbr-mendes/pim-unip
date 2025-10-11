@@ -8,6 +8,82 @@ load_dotenv()
 WEBSOCKET_URL = os.getenv("WEBSOCKET_URL")
 
 # =====================================================
+# === LISTAR ENTIDADES ===============================
+# =====================================================
+
+def listar_admins():
+    """Lista todos os administradores no sistema"""
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {"action": "listar_admins"}
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        return resposta
+    except Exception as e:
+        return {"status": "error", "message": f"Falha de conexão: {e}"}
+
+def listar_alunos():
+    """Lista todos os alunos no sistema"""
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {"action": "listar_alunos"}
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        return resposta
+    except Exception as e:
+        return {"status": "error", "message": f"Falha de conexão: {e}"}
+
+def listar_professores():
+    """Lista todos os professores no sistema"""
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {"action": "listar_professores"}
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        return resposta
+    except Exception as e:
+        return {"status": "error", "message": f"Falha de conexão: {e}"}
+
+def listar_cursos():
+    """Lista todos os cursos no sistema"""
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {"action": "listar_cursos"}
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        return resposta
+    except Exception as e:
+        return {"status": "error", "message": f"Falha de conexão: {e}"}
+
+def listar_disciplinas():
+    """Lista todas as disciplinas no sistema"""
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {"action": "listar_disciplinas"}
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        return resposta
+    except Exception as e:
+        return {"status": "error", "message": f"Falha de conexão: {e}"}
+
+def listar_turmas():
+    """Lista todas as turmas no sistema"""
+    try:
+        ws = create_connection(WEBSOCKET_URL)
+        msg = {"action": "listar_turmas"}
+        ws.send(json.dumps(msg))
+        resposta = json.loads(ws.recv())
+        ws.close()
+        return resposta
+    except Exception as e:
+        return {"status": "error", "message": f"Falha de conexão: {e}"}
+
+# =====================================================
 # === ADMINISTRADORES ================================
 # =====================================================
 
