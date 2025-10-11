@@ -20,5 +20,5 @@ def autenticar_usuario(username, password):
     usuarios = carregar_usuarios()
     for u in usuarios:
         if u["username"] == username and u["password"] == password:
-            return True
-    return False
+            return {"username": u["username"], "role": u.get("role", "user")}
+    return None

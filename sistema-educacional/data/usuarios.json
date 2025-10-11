@@ -1,4 +1,4 @@
 [
-  { "username": "professor", "password": "1234" },
-  { "username": "aluno", "password": "abcd" }
+  { "username": "professor", "password": "1234", "role": "professor" },
+  { "username": "aluno", "password": "abcd", "role": "aluno" }
 ]

@@ -1,30 +1,59 @@
 import customtkinter as ctk
 from view.login_view import criar_tela_login
+from session import set_usuario, get_usuario, limpar_usuario
 
 root = None
 
-def mostrar_login():
-    limpar_tela()
-    criar_tela_login(root, on_login_sucesso)
-
 def on_login_sucesso(usuario):
+    # Salva globalmente
+    set_usuario(usuario)
+
     limpar_tela()
 
+    role = usuario["role"]
     label = ctk.CTkLabel(
         root,
-        text=f"Bem-vindo, {usuario}! 👋",
+        text=f"Bem-vindo, {usuario['username']}! 👋",
         font=ctk.CTkFont(size=18, weight="bold")
     )
     label.pack(pady=30)
+
+    # Redireciona para dashboard de acordo com role
+    if role == "professor":
+        mostrar_dashboard_professor()
+    elif role == "aluno":
+        mostrar_dashboard_aluno()
+    else:
+        mostrar_dashboard_padrao()
 
     btn_logout = ctk.CTkButton(
         root,
         text="Sair",
         width=120,
         height=35,
-        command=mostrar_login
+        command=logout
     )
     btn_logout.pack(pady=10)
+
+def mostrar_login():
+    limpar_tela()
+    criar_tela_login(root, on_login_sucesso)
+
+def mostrar_dashboard_professor():
+    label = ctk.CTkLabel(root, text="Dashboard do Professor", font=ctk.CTkFont(size=16))
+    label.pack(pady=20)
+
+def mostrar_dashboard_aluno():
+    label = ctk.CTkLabel(root, text="Dashboard do Aluno", font=ctk.CTkFont(size=16))
+    label.pack(pady=20)
+
+def mostrar_dashboard_padrao():
+    label = ctk.CTkLabel(root, text="Role inexistente", font=ctk.CTkFont(size=16))
+    label.pack(pady=20)
+
+def logout():
+    limpar_usuario()
+    mostrar_login()
 
 def limpar_tela():
     for widget in root.winfo_children():

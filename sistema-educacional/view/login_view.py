@@ -83,7 +83,8 @@ def criar_tela_login(root, on_login_sucesso):
         msg = resposta.get("message", "")
 
         if status == "ok":
-            on_login_sucesso(entry_usuario.get())
+            # Passa o dict do usuário completo, com username e role
+            on_login_sucesso(resposta["user"])
         elif status == "error":
             erro.configure(text=msg or "Falha de autenticação", text_color="red")
         else:

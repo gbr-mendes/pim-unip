@@ -9,8 +9,16 @@ def receber_mensagem(client, server, message):
         user = data["username"]
         pwd = data["password"]
 
-        if autenticar_usuario(user, pwd):
-            resposta = {"status": "ok", "message": "Login bem-sucedido"}
+        usuario = autenticar_usuario(user, pwd)
+        if usuario:
+            resposta = {
+                "status": "ok",
+                "message": "Login bem-sucedido",
+                "user": {
+                    "username": usuario["username"],
+                    "role": usuario["role"]
+                }
+            }
         else:
             resposta = {"status": "error", "message": "Credenciais inválidas"}
 
