@@ -23,6 +23,8 @@ def on_login_sucesso(usuario):
         mostrar_dashboard_professor()
     elif role == "aluno":
         mostrar_dashboard_aluno()
+    elif role == "admin":
+        mostrar_dashboard_admin()
     else:
         mostrar_dashboard_padrao()
 
@@ -46,6 +48,10 @@ def mostrar_dashboard_professor():
 def mostrar_dashboard_aluno():
     label = ctk.CTkLabel(root, text="Dashboard do Aluno", font=ctk.CTkFont(size=16))
     label.pack(pady=20)
+
+def mostrar_dashboard_admin():
+    from view.admin_view import criar_dashboard_admin
+    criar_dashboard_admin(root)
 
 def mostrar_dashboard_padrao():
     label = ctk.CTkLabel(root, text="Role inexistente", font=ctk.CTkFont(size=16))
