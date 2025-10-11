@@ -1,4 +1,4 @@
-import tkinter as tk
+import customtkinter as ctk
 from view.login_view import criar_tela_login
 
 root = None
@@ -10,10 +10,20 @@ def mostrar_login():
 def on_login_sucesso(usuario):
     limpar_tela()
 
-    label = tk.Label(root, text=f"Bem-vindo, {usuario}!", font=("Arial", 14))
-    label.pack(pady=20)
+    label = ctk.CTkLabel(
+        root,
+        text=f"Bem-vindo, {usuario}! 👋",
+        font=ctk.CTkFont(size=18, weight="bold")
+    )
+    label.pack(pady=30)
 
-    btn_logout = tk.Button(root, text="Sair", command=mostrar_login)
+    btn_logout = ctk.CTkButton(
+        root,
+        text="Sair",
+        width=120,
+        height=35,
+        command=mostrar_login
+    )
     btn_logout.pack(pady=10)
 
 def limpar_tela():
@@ -22,8 +32,17 @@ def limpar_tela():
 
 def main():
     global root
-    root = tk.Tk()
+
+    # Configuração visual global
+    ctk.set_appearance_mode("dark")          # "light" ou "dark"
+    ctk.set_default_color_theme("dark-blue") # "blue", "green", "dark-blue"
+
+    root = ctk.CTk()
     root.title("Sistema Educacional - Cliente")
+    root.geometry("700x500")
+    root.minsize(600, 400)
+    root.configure(fg_color=("#1c1c1c", "#1c1c1c"))  # fundo escuro uniforme
+
     mostrar_login()
     root.mainloop()
 
