@@ -7,11 +7,11 @@ load_dotenv()
 
 WEBSOCKET_URL = os.getenv("WEBSOCKET_URL") or "wss://d8603a0fc310.ngrok-free.app"
 
-def listar_admins():
-    """Lista todos os administradores no sistema"""
+def listar_cursos():
+    """Lista todos os cursos no sistema"""
     try:
         ws = create_connection(WEBSOCKET_URL)
-        msg = {"action": "listar_admins"}
+        msg = {"action": "listar_cursos"}
         ws.send(json.dumps(msg))
         resposta = json.loads(ws.recv())
         ws.close()
@@ -19,30 +19,20 @@ def listar_admins():
     except Exception as e:
         return {"status": "error", "message": f"Falha de conexão: {e}"}
 
-def cadastrar_admin(nome: str, sobrenome: str, email: str, senha: str, confirme_senha: str):
-    """Cadastra um novo administrador no sistema via WebSocket"""
-    if not nome.strip() or not sobrenome.strip() or not email.strip():
+def cadastrar_curso(nome_curso: str):
+    """Cadastra um novo curso no sistema via WebSocket"""
+    if not nome_curso.strip():
         return {
             "status": "error", 
-            "message": "Nome, sobrenome e email são obrigatórios",
-            "clear_form": False
-        }
-
-    if senha != confirme_senha:
-        return {
-            "status": "error", 
-            "message": "Senhas não conferem",
+            "message": "Nome do curso é obrigatório",
             "clear_form": False
         }
 
     try:
         ws = create_connection(WEBSOCKET_URL)
         msg = {
-            "action": "cadastrar_admin",
-            "nome": nome,
-            "sobrenome": sobrenome,
-            "email": email,
-            "senha": senha
+            "action": "cadastrar_curso",
+            "nome": nome_curso
         }
         ws.send(json.dumps(msg))
         resposta = json.loads(ws.recv())
@@ -50,7 +40,7 @@ def cadastrar_admin(nome: str, sobrenome: str, email: str, senha: str, confirme_
         
         if resposta.get("status") == "ok":
             resposta["clear_form"] = True
-            resposta["message"] = f"Administrador {nome} {sobrenome} cadastrado com sucesso!"
+            resposta["message"] = f"Curso '{nome_curso}' cadastrado com sucesso!"
         else:
             resposta["clear_form"] = False
             

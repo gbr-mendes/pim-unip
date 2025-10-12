@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import ttk
 import tkinter as tk
-from controller.admin_controller import (
+from controller import (
     cadastrar_aluno,
     cadastrar_professor,
     cadastrar_admin,
