@@ -1,7 +1,7 @@
 [
   {
     "id": "3154",
-    "nome": "1\u00ba semestre",
+    "nome": "1\u00ba semestre - Turma A",
     "curso_id": "7627",
     "alunos": [
       "4429",
@@ -13,7 +13,7 @@
   },
   {
     "id": "7029",
-    "nome": "1\u00ba semetre - Turma B",
+    "nome": "1\u00ba semestre - Turma B",
     "curso_id": "7627",
     "alunos": [],
     "disciplinas": [
@@ -53,7 +53,7 @@
   },
   {
     "id": "7652",
-    "nome": "1 \u00ba semestre - Turma A",
+    "nome": "1\u00ba semestre - Turma A",
     "curso_id": "9385",
     "alunos": [],
     "disciplinas": [
