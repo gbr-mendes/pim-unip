@@ -30,5 +30,15 @@
       "9464",
       "2544"
     ]
+  },
+  {
+    "id": "6136",
+    "nome": "1\u00ba semestre - Turma D",
+    "curso_id": "7627",
+    "alunos": [],
+    "disciplinas": [
+      "2544",
+      "9464"
+    ]
   }
 ]

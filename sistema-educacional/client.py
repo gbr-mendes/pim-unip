@@ -50,7 +50,7 @@ def mostrar_dashboard_aluno():
     label.pack(pady=20)
 
 def mostrar_dashboard_admin():
-    from view.admin_view import criar_dashboard_admin
+    from view.admin import criar_dashboard_admin
     criar_dashboard_admin(root)
 
 def mostrar_dashboard_padrao():
@@ -74,8 +74,17 @@ def main():
 
     root = ctk.CTk()
     root.title("Sistema Educacional - Cliente")
-    root.geometry("700x500")
-    root.minsize(600, 400)
+    # root.geometry("700x500")
+    # full size screen
+    # root.state('zoomed')
+    # root.minsize(600, 400)
+    largura = root.winfo_screenwidth()
+    altura = root.winfo_screenheight()
+    x = (root.winfo_screenwidth() // 2) - (largura // 2)
+    y = (root.winfo_screenheight() // 2) - (altura // 2)
+
+    # define tamanho + posição
+    root.geometry(f"{largura}x{altura}+{x}+{y}")
     root.configure(fg_color=("#1c1c1c", "#1c1c1c"))  # fundo escuro uniforme
 
     mostrar_login()
