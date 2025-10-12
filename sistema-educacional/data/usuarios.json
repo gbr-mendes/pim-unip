@@ -38,5 +38,21 @@
     "sobrenome": "Sereno",
     "role": "professor",
     "id": "8191"
+  },
+  {
+    "username": "aldy@email.com",
+    "password": "1234",
+    "nome": "Aldy",
+    "sobrenome": "Sla",
+    "role": "professor",
+    "id": "5127"
+  },
+  {
+    "username": "brenda@email.com",
+    "password": "1234",
+    "nome": "Brenda",
+    "sobrenome": "Mendes",
+    "role": "aluno",
+    "id": "6503"
   }
 ]

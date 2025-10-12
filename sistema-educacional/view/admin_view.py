@@ -12,7 +12,6 @@ from controller.admin_controller import (
     associar_disciplina_curso,
     atribuir_professor_disciplina,
     associar_turma_curso,
-    associar_disciplina_turma,
     listar_admins,
     listar_alunos,
     listar_professores,
@@ -124,15 +123,76 @@ def criar_janela_cadastro(parent, titulo, callback_cadastro, campos):
     ctk.CTkLabel(frame, text=titulo, font=ctk.CTkFont(size=20, weight="bold")).pack(pady=20)
     
     entries = {}
+    dependent_fields = {}
+    
     for campo in campos:
-        entry = ctk.CTkEntry(frame, placeholder_text=campo['placeholder'])
-        entry.pack(fill="x", padx=20, pady=10)
-        if campo.get('password', False):
-            entry.configure(show="*")
-        entries[campo['name']] = entry
+        if campo.get('type') == 'select':
+            # Criar label para o select
+            ctk.CTkLabel(frame, text=campo['label']).pack(fill="x", padx=20, pady=(10,0))
+            # Criar combobox
+            combobox = ctk.CTkComboBox(frame, values=[f"{item['id']} - {item['nome']}" for item in campo['options']])
+            combobox.pack(fill="x", padx=20, pady=(0,10))
+            
+            if campo.get('default'):
+                combobox.set(campo['default'])
+                
+            entries[campo['name']] = combobox
+            
+            # Se este campo tem dependentes, configurar o callback
+            if campo.get('dependents'):
+                dependent_fields[campo['name']] = campo['dependents']
+                
+                def on_combobox_select(choice, name=campo['name']):
+                    update_dependent_fields(name)
+                
+                combobox.configure(command=on_combobox_select)
+                
+        else:
+            # Campo normal de texto
+            entry = ctk.CTkEntry(frame, placeholder_text=campo['placeholder'])
+            entry.pack(fill="x", padx=20, pady=10)
+            if campo.get('password', False):
+                entry.configure(show="*")
+            entries[campo['name']] = entry
+    
+    def update_dependent_fields(field_name):
+        if field_name not in dependent_fields:
+            return
+            
+        selected = entries[field_name].get()
+        if not selected:
+            return
+            
+        selected_id = selected.split(' - ')[0]
+        
+        for dep_field in dependent_fields[field_name]:
+            dependent_combobox = entries[dep_field['name']]
+            # Atualizar opções baseado no valor selecionado
+            new_options = dep_field['update_options'](selected_id)
+            if new_options:
+                # Criar lista de strings formatadas para as opções
+                option_strings = [f"{item['id']} - {item['nome']}" for item in new_options]
+                # Atualizar valores do combobox
+                dependent_combobox.configure(values=option_strings)
+                # Se houver opções, selecionar a primeira
+                if option_strings:
+                    dependent_combobox.set(option_strings[0])
+                else:
+                    dependent_combobox.set("")
+            else:
+                dependent_combobox.configure(values=[])
+                dependent_combobox.set("")
     
     def submit():
-        valores = {name: entry.get() for name, entry in entries.items()}
+        valores = {}
+        for name, widget in entries.items():
+            if isinstance(widget, ctk.CTkComboBox):
+                # Pegar apenas o ID do item selecionado (antes do hífen)
+                valor = widget.get().split(' - ')[0] if widget.get() else None
+                valores[name] = valor
+            else:
+                valores[name] = widget.get()
+        
         response = callback_cadastro(**valores)
         if response["status"] == "ok":
             window.destroy()
@@ -205,22 +265,6 @@ def atualizar_lista(listbox, dados):
             listbox.insert('end', texto + '\n')
         else:
             listbox.insert('end', str(item) + '\n')
-
-# def criar_secao_lista(parent, titulo, altura=150):
-#     """Cria uma seção com título, listbox e botão de atualizar"""
-#     frame = ctk.CTkFrame(parent)
-#     frame.pack(fill="x", padx=10, pady=5)
-    
-#     # Título e botão de atualizar lado a lado
-#     header = ctk.CTkFrame(frame)
-#     header.pack(fill="x", pady=5)
-    
-#     ctk.CTkLabel(header, text=titulo).pack(side="left", padx=5)
-    
-#     listbox = ctk.CTkTextbox(frame, height=altura)
-#     listbox.pack(fill="x", padx=5, pady=5)
-    
-#     return frame, listbox
 
 def criar_dashboard_admin(root):
     # Limpa tela
@@ -323,17 +367,53 @@ def criar_dashboard_admin(root):
                 ))
 
     def abrir_cadastro_aluno():
+        # Obter lista de cursos
+        response_cursos = listar_cursos()
+        cursos = response_cursos["data"] if response_cursos["status"] == "ok" else []
+        
+        # Função para atualizar turmas baseado no curso selecionado
+        def get_turmas_by_curso(curso_id):
+            response_turmas = listar_turmas()
+            if response_turmas["status"] == "ok":
+                # Filtrar turmas pelo curso selecionado
+                turmas_do_curso = [
+                    turma for turma in response_turmas["data"] 
+                    if turma.get('curso_id') == curso_id
+                ]
+                return turmas_do_curso
+            return []
+        
         campos_aluno = [
             {'name': 'nome', 'placeholder': 'Nome'},
             {'name': 'sobrenome', 'placeholder': 'Sobrenome'},
             {'name': 'email', 'placeholder': 'E-mail'},
             {'name': 'senha', 'placeholder': 'Senha', 'password': True},
-            {'name': 'confirme_senha', 'placeholder': 'Confirme Senha', 'password': True}
+            {'name': 'confirme_senha', 'placeholder': 'Confirme Senha', 'password': True},
+            {
+                'name': 'curso_id',
+                'type': 'select',
+                'label': 'Selecione o Curso:',
+                'options': cursos,
+                'dependents': [{
+                    'name': 'turma_id',
+                    'update_options': get_turmas_by_curso
+                }]
+            },
+            {
+                'name': 'turma_id',
+                'type': 'select',
+                'label': 'Selecione a Turma:',
+                'options': []  # Será preenchido após selecionar o curso
+            }
         ]
         
         def cadastrar_aluno_handler(**kwargs):
+            turma_id = kwargs.pop('turma_id', None)
+            curso_id = kwargs.pop('curso_id', None)  # Remove curso_id pois não é usado no cadastro
             response = cadastrar_aluno(**kwargs)
-            if response["status"] == "ok":
+            if response["status"] == "ok" and turma_id:
+                # Atribuir aluno à turma
+                atribuir_aluno_turma(response["data"]["id"], turma_id)
                 atualizar_lista_alunos()
             return response
         
@@ -476,13 +556,31 @@ def criar_dashboard_admin(root):
                 ))
 
     def abrir_cadastro_disciplina():
+        # Obter lista de professores e cursos
+        response_profs = listar_professores()
+        professores = response_profs["data"] if response_profs["status"] == "ok" else []
+        
+        response_cursos = listar_cursos()
+        cursos = response_cursos["data"] if response_cursos["status"] == "ok" else []
+        
         campos_disciplina = [
-            {'name': 'nome', 'placeholder': 'Nome da Disciplina'}
+            {'name': 'nome', 'placeholder': 'Nome da Disciplina'},
+            {'name': 'professor_id', 'type': 'select', 'label': 'Selecione o Professor:', 'options': professores},
+            {'name': 'curso_id', 'type': 'select', 'label': 'Selecione o Curso:', 'options': cursos}
         ]
         
         def cadastrar_disciplina_handler(**kwargs):
+            professor_id = kwargs.pop('professor_id', None)
+            curso_id = kwargs.pop('curso_id', None)
             response = cadastrar_disciplina(kwargs['nome'])
+            
             if response["status"] == "ok":
+                disciplina_id = response["data"]["id"]
+                # Associar professor e curso à disciplina
+                if professor_id:
+                    atribuir_professor_disciplina(professor_id, disciplina_id)
+                if curso_id:
+                    associar_disciplina_curso(disciplina_id, curso_id)
                 atualizar_lista_disciplinas()
             return response
         
@@ -522,19 +620,174 @@ def criar_dashboard_admin(root):
                     turma['nome']
                 ))
 
-    def abrir_cadastro_turma():
-        campos_turma = [
-            {'name': 'nome', 'placeholder': 'Nome da Turma'}
+    # def abrir_cadastro_turma():
+        # Obter lista de cursos
+        response_cursos = listar_cursos()
+        cursos = response_cursos["data"] if response_cursos["status"] == "ok" else []
+        
+        # Função para atualizar disciplinas baseado no curso selecionado
+        def atualizar_disciplinas(event=None):
+            curso_selecionado = entries['curso'].get()
+            if not curso_selecionado:
+                entries['disciplinas'].configure(values=[])
+                return
+                
+            curso_id = curso_selecionado.split(' - ')[0]
+            response_disciplinas = listar_disciplinas()
+            if response_disciplinas["status"] == "ok":
+                disciplinas_todas = response_disciplinas["data"]
+                # Aqui você precisaria de uma função no backend para filtrar as disciplinas por curso
+                # Por enquanto, vamos mostrar todas as disciplinas
+                entries['disciplinas'].configure(
+                    values=[f"{d['id']} - {d['nome']}" for d in disciplinas_todas]
+                )
+        
+        campos = [
+            {'name': 'nome_turma', 'placeholder': 'Nome da Turma'},
+            {
+                'name': 'curso',
+                'type': 'select',
+                'placeholder': 'Selecione o Curso',
+                'values': [f"{c['id']} - {c['nome']}" for c in cursos],
+                'on_select': atualizar_disciplinas
+            },
+            {
+                'name': 'disciplinas',
+                'type': 'multiselect',
+                'placeholder': 'Selecione as Disciplinas',
+                'values': [],  # Será preenchido quando um curso for selecionado
+            }
         ]
         
-        def criar_turma_handler(**kwargs):
-            response = criar_turma(kwargs['nome'])
-            if response["status"] == "ok":
-                atualizar_lista_turmas()
-            return response
+        def cadastrar_turma_handler(**kwargs):
+            nome_turma = kwargs.get('nome_turma')
+            curso = kwargs.get('curso')
+            disciplinas = kwargs.get('disciplinas')
+            
+            curso_id = None
+            if curso:
+                curso_id = curso.split(' - ')[0]
+                
+            disciplinas_ids = []
+            if disciplinas:
+                # Para multiselect, disciplinas vem como uma lista de strings
+                disciplinas_ids = [d.split(' - ')[0] for d in disciplinas]
+                
+            return criar_turma(
+                nome_turma=nome_turma,
+                curso_id=curso_id,
+                disciplinas_ids=disciplinas_ids
+            )
+
+    def abrir_cadastro_turma():
+        from .utils import MultiSelectComboBox
         
-        criar_janela_cadastro(frame_turmas, "Criar Turma", 
-                            criar_turma_handler, campos_turma)
+        # Obter lista de cursos
+        response_cursos = listar_cursos()
+        cursos = response_cursos["data"] if response_cursos["status"] == "ok" else []
+        
+        # Criar janela
+        window = ctk.CTkToplevel(frame_turmas)
+        window.title("Criar Nova Turma")
+        window.geometry("400x600")
+        window.transient(frame_turmas)
+        window.grab_set()
+        
+        frame = ctk.CTkFrame(window)
+        frame.pack(padx=20, pady=20, fill="both", expand=True)
+        
+        # Título
+        ctk.CTkLabel(frame, text="Criar Nova Turma", 
+                    font=ctk.CTkFont(size=20, weight="bold")).pack(pady=20)
+        
+        # Nome da Turma
+        frame_nome = ctk.CTkFrame(frame, fg_color="transparent")
+        frame_nome.pack(fill="x", padx=5, pady=2)
+        ctk.CTkLabel(frame_nome, text="Nome da Turma:").pack(anchor="w")
+        entry_nome = ctk.CTkEntry(frame_nome)
+        entry_nome.pack(fill="x", pady=5)
+        
+        # Curso
+        frame_curso = ctk.CTkFrame(frame, fg_color="transparent")
+        frame_curso.pack(fill="x", padx=5, pady=2)
+        ctk.CTkLabel(frame_curso, text="Selecione o Curso:").pack(anchor="w")
+        combo_curso = ctk.CTkComboBox(
+            frame_curso,
+            values=[f"{c['id']} - {c['nome']}" for c in cursos],
+            state="readonly"
+        )
+        combo_curso.pack(fill="x", pady=5)
+        
+        # Disciplinas
+        frame_disc = ctk.CTkFrame(frame, fg_color="transparent")
+        frame_disc.pack(fill="x", padx=5, pady=2)
+        ctk.CTkLabel(frame_disc, text="Selecione as Disciplinas:").pack(anchor="w")
+        
+        multiselect_disc = MultiSelectComboBox(frame_disc)
+        multiselect_disc.pack(fill="x", pady=5)
+        
+        def atualizar_disciplinas(event=None):
+            curso_selecionado = combo_curso.get()
+            if not curso_selecionado:
+                multiselect_disc.clear()
+                return
+
+            response_disciplinas = listar_disciplinas()
+            if response_disciplinas["status"] == "ok":
+                disciplinas_todas = response_disciplinas["data"]
+                # Por enquanto, mostra todas as disciplinas
+                # Idealmente, filtrar por curso no backend
+                multiselect_disc.configure(
+                    values=[f"{d['id']} - {d['nome']}" for d in disciplinas_todas]
+                )
+        
+        combo_curso.configure(command=atualizar_disciplinas)
+        
+        def cadastrar():
+            nome_turma = entry_nome.get()
+            curso = combo_curso.get()
+            disciplinas = multiselect_disc.get()
+            
+            curso_id = None
+            if curso:
+                curso_id = curso.split(' - ')[0]
+                
+            disciplinas_ids = []
+            if disciplinas:
+                disciplinas_ids = [d.split(' - ')[0] for d in disciplinas]
+            
+            response = criar_turma(
+                nome_turma=nome_turma,
+                curso_id=curso_id,
+                disciplinas_ids=disciplinas_ids
+            )
+            
+            if response["status"] == "ok":
+                window.destroy()
+                mostrar_feedback(frame_turmas, response["message"], "success")
+                atualizar_lista_turmas()
+            else:
+                mostrar_feedback(frame, response["message"], "error")
+        
+        # Botões
+        frame_botoes = ctk.CTkFrame(frame, fg_color="transparent")
+        frame_botoes.pack(fill="x", pady=20)
+        
+        ctk.CTkButton(frame_botoes, text="Cadastrar", command=cadastrar).pack(pady=5)
+        ctk.CTkButton(frame_botoes, text="Cancelar", command=window.destroy).pack(pady=5)
+        
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     # Botões de ação
     frame_botoes = ctk.CTkFrame(frame_lista_turmas)

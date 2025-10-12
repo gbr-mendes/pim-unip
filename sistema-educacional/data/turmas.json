@@ -4,10 +4,31 @@
     "nome": "1\u00ba semestre",
     "curso_id": "7627",
     "alunos": [
-      "4429"
+      "4429",
+      "6503"
     ],
     "disciplinas": [
       "9464"
+    ]
+  },
+  {
+    "id": "7029",
+    "nome": "1\u00ba semetre - Turma B",
+    "curso_id": "7627",
+    "alunos": [],
+    "disciplinas": [
+      "9464",
+      "2544"
+    ]
+  },
+  {
+    "id": "2172",
+    "nome": "1\u00ba semestre - Turma C",
+    "curso_id": "7627",
+    "alunos": [],
+    "disciplinas": [
+      "9464",
+      "2544"
     ]
   }
 ]

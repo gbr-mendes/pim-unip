@@ -134,13 +134,13 @@ def cadastrar_admin(nome: str, sobrenome: str, email: str, senha: str, confirme_
 # === ALUNOS ==========================================
 # =====================================================
 
-def cadastrar_aluno(nome: str, sobrenome: str, email: str, senha: str, confirme_senha: str):
-    """Cadastra um novo aluno no sistema via WebSocket"""
+def cadastrar_aluno(nome: str, sobrenome: str, email: str, senha: str, confirme_senha: str, curso_id: str = None, turma_id: str = None):
+    """Cadastra um novo aluno no sistema via WebSocket e opcionalmente associa a uma turma"""
     if not nome.strip() or not sobrenome.strip() or not email.strip():
         return {
             "status": "error", 
             "message": "Nome, sobrenome e email são obrigatórios",
-            "clear_form": False  # Não limpa o form em caso de erro de validação
+            "clear_form": False
         }
 
     if senha != confirme_senha:
@@ -163,10 +163,28 @@ def cadastrar_aluno(nome: str, sobrenome: str, email: str, senha: str, confirme_
         resposta = json.loads(ws.recv())
         ws.close()
         
+        if resposta.get("status") == "ok" and turma_id:
+            # Se o cadastro foi bem sucedido e uma turma foi especificada,
+            # associa o aluno à turma
+            ws = create_connection(WEBSOCKET_URL)
+            msg_atrib = {
+                "action": "atribuir_aluno_turma",
+                "id_aluno": resposta["data"]["id"],
+                "id_turma": turma_id
+            }
+            ws.send(json.dumps(msg_atrib))
+            resp_atrib = json.loads(ws.recv())
+            ws.close()
+            
+            if resp_atrib.get("status") == "ok":
+                resposta["message"] = f"Aluno {nome} {sobrenome} cadastrado e atribuído à turma com sucesso!"
+            else:
+                resposta["message"] = f"Aluno cadastrado, mas houve um erro ao atribuir à turma: {resp_atrib.get('message')}"
+        
         if resposta.get("status") == "ok":
-            # Adiciona informação para limpar o formulário em caso de sucesso
             resposta["clear_form"] = True
-            resposta["message"] = f"Aluno {nome} {sobrenome} cadastrado com sucesso!"
+            if not resposta.get("message"):
+                resposta["message"] = f"Aluno {nome} {sobrenome} cadastrado com sucesso!"
         else:
             resposta["clear_form"] = False
         
@@ -269,8 +287,8 @@ def cadastrar_curso(nome_curso: str):
 # === DISCIPLINAS =====================================
 # =====================================================
 
-def cadastrar_disciplina(nome_disciplina: str):
-    """Cadastra uma nova disciplina no sistema via WebSocket"""
+def cadastrar_disciplina(nome_disciplina: str, curso_id: str = None, professor_id: str = None):
+    """Cadastra uma nova disciplina no sistema via WebSocket e opcionalmente associa a um curso e professor"""
     if not nome_disciplina.strip():
         return {
             "status": "error", 
@@ -289,8 +307,49 @@ def cadastrar_disciplina(nome_disciplina: str):
         ws.close()
         
         if resposta.get("status") == "ok":
+            disciplina_id = resposta["data"]["id"]
+            
+            # Associar ao curso se especificado
+            if curso_id:
+                ws = create_connection(WEBSOCKET_URL)
+                msg_curso = {
+                    "action": "associar_disciplina_curso",
+                    "id_disciplina": disciplina_id,
+                    "id_curso": curso_id
+                }
+                ws.send(json.dumps(msg_curso))
+                resp_curso = json.loads(ws.recv())
+                ws.close()
+                
+                if resp_curso.get("status") != "ok":
+                    resposta["message"] = f"Disciplina criada, mas houve um erro ao associar ao curso: {resp_curso.get('message')}"
+                    return resposta
+            
+            # Atribuir professor se especificado
+            if professor_id:
+                ws = create_connection(WEBSOCKET_URL)
+                msg_prof = {
+                    "action": "atribuir_professor_disciplina",
+                    "id_disciplina": disciplina_id,
+                    "id_professor": professor_id
+                }
+                ws.send(json.dumps(msg_prof))
+                resp_prof = json.loads(ws.recv())
+                ws.close()
+                
+                if resp_prof.get("status") != "ok":
+                    resposta["message"] = f"Disciplina criada e associada ao curso, mas houve um erro ao atribuir o professor: {resp_prof.get('message')}"
+                    return resposta
+            
             resposta["clear_form"] = True
-            resposta["message"] = f"Disciplina '{nome_disciplina}' cadastrada com sucesso!"
+            if not resposta.get("message"):
+                resposta["message"] = f"Disciplina '{nome_disciplina}' cadastrada com sucesso!"
+                if curso_id and professor_id:
+                    resposta["message"] = f"Disciplina '{nome_disciplina}' cadastrada, associada ao curso e professor com sucesso!"
+                elif curso_id:
+                    resposta["message"] = f"Disciplina '{nome_disciplina}' cadastrada e associada ao curso com sucesso!"
+                elif professor_id:
+                    resposta["message"] = f"Disciplina '{nome_disciplina}' cadastrada e atribuída ao professor com sucesso!"
         else:
             resposta["clear_form"] = False
             
@@ -371,8 +430,8 @@ def atribuir_professor_disciplina(id_professor: str, id_disciplina: str):
 # === TURMAS ==========================================
 # =====================================================
 
-def criar_turma(nome_turma: str):
-    """Cria uma nova turma no sistema via WebSocket"""
+def criar_turma(nome_turma: str, curso_id: str = None, disciplinas_ids: list = None):
+    """Cria uma nova turma no sistema via WebSocket e opcionalmente associa a um curso e disciplinas"""
     if not nome_turma.strip():
         return {
             "status": "error", 
@@ -391,8 +450,60 @@ def criar_turma(nome_turma: str):
         ws.close()
         
         if resposta.get("status") == "ok":
+            turma_id = resposta["data"]["id"]
+            success_messages = []
+            error_messages = []
+
+            # Se o cadastro foi bem sucedido e um curso foi especificado,
+            # associa a turma ao curso
+            if curso_id:
+                ws = create_connection(WEBSOCKET_URL)
+                msg_curso = {
+                    "action": "associar_turma_curso",
+                    "id_turma": turma_id,
+                    "id_curso": curso_id
+                }
+                ws.send(json.dumps(msg_curso))
+                resp_curso = json.loads(ws.recv())
+                ws.close()
+                
+                if resp_curso.get("status") == "ok":
+                    success_messages.append("associada ao curso")
+                else:
+                    error_messages.append(f"erro ao associar ao curso: {resp_curso.get('message')}")
+
+            # Se disciplinas foram especificadas, associa cada uma à turma
+            if disciplinas_ids:
+                for disc_id in disciplinas_ids:
+                    ws = create_connection(WEBSOCKET_URL)
+                    msg_disc = {
+                        "action": "associar_disciplina_turma",
+                        "id_disciplina": disc_id,
+                        "id_turma": turma_id
+                    }
+                    ws.send(json.dumps(msg_disc))
+                    resp_disc = json.loads(ws.recv())
+                    ws.close()
+                    
+                    if resp_disc.get("status") == "ok":
+                        continue
+                    else:
+                        error_messages.append(f"erro ao associar disciplina {disc_id}: {resp_disc.get('message')}")
+                
+                if not error_messages:
+                    success_messages.append("disciplinas associadas")
+            
+            # Compõe a mensagem de resposta
             resposta["clear_form"] = True
-            resposta["message"] = f"Turma '{nome_turma}' criada com sucesso!"
+            base_msg = f"Turma '{nome_turma}' criada"
+            if success_messages:
+                base_msg += " e " + " e ".join(success_messages)
+            base_msg += " com sucesso!"
+            
+            if error_messages:
+                base_msg += " Porém houve alguns erros: " + "; ".join(error_messages)
+            
+            resposta["message"] = base_msg
         else:
             resposta["clear_form"] = False
             

@@ -4,5 +4,11 @@
     "nome": "Banco de dados",
     "professor_id": "1239",
     "curso_id": "7627"
+  },
+  {
+    "id": "2544",
+    "nome": "Estrutura de dados com python",
+    "professor_id": "5127",
+    "curso_id": "7627"
   }
 ]
