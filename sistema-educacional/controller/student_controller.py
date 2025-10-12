@@ -1,21 +1,12 @@
-import json
-import os
-from websocket import create_connection
-from dotenv import load_dotenv
+from .websocket_manager import WebSocketManager
 
-load_dotenv()
-
-WEBSOCKET_URL = os.getenv("WEBSOCKET_URL") or "wss://d8603a0fc310.ngrok-free.app"
+ws_manager = WebSocketManager()
 
 def listar_alunos():
     """Lista todos os alunos no sistema"""
     try:
-        ws = create_connection(WEBSOCKET_URL)
         msg = {"action": "listar_alunos"}
-        ws.send(json.dumps(msg))
-        resposta = json.loads(ws.recv())
-        ws.close()
-        return resposta
+        return ws_manager.send_and_receive(msg)
     except Exception as e:
         return {"status": "error", "message": f"Falha de conexão: {e}"}
 
@@ -36,7 +27,6 @@ def cadastrar_aluno(nome: str, sobrenome: str, email: str, senha: str, confirme_
         }
 
     try:
-        ws = create_connection(WEBSOCKET_URL)
         msg = {
             "action": "cadastrar_aluno",
             "nome": nome,
@@ -44,22 +34,17 @@ def cadastrar_aluno(nome: str, sobrenome: str, email: str, senha: str, confirme_
             "email": email,
             "senha": senha
         }
-        ws.send(json.dumps(msg))
-        resposta = json.loads(ws.recv())
-        ws.close()
+        resposta = ws_manager.send_and_receive(msg)
         
         if resposta.get("status") == "ok" and turma_id:
             # Se o cadastro foi bem sucedido e uma turma foi especificada,
             # associa o aluno à turma
-            ws = create_connection(WEBSOCKET_URL)
             msg_atrib = {
                 "action": "atribuir_aluno_turma",
                 "id_aluno": resposta["data"]["id"],
                 "id_turma": turma_id
             }
-            ws.send(json.dumps(msg_atrib))
-            resp_atrib = json.loads(ws.recv())
-            ws.close()
+            resp_atrib = ws_manager.send_and_receive(msg_atrib)
             
             if resp_atrib.get("status") == "ok":
                 resposta["message"] = f"Aluno {nome} {sobrenome} cadastrado e atribuído à turma com sucesso!"

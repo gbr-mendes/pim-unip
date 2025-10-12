@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from ..components.list_section import criar_secao_lista
-from ..components.multi_select import MultiSelectComboBox
 from controller import criar_turma, listar_turmas, listar_cursos, listar_disciplinas
 
 def create_class_tab(tab):

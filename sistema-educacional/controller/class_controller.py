@@ -1,21 +1,12 @@
-import json
-import os
-from websocket import create_connection
-from dotenv import load_dotenv
+from .websocket_manager import WebSocketManager
 
-load_dotenv()
-
-WEBSOCKET_URL = os.getenv("WEBSOCKET_URL") or "wss://d8603a0fc310.ngrok-free.app"
+ws_manager = WebSocketManager()
 
 def listar_turmas():
     """Lista todas as turmas no sistema"""
     try:
-        ws = create_connection(WEBSOCKET_URL)
         msg = {"action": "listar_turmas"}
-        ws.send(json.dumps(msg))
-        resposta = json.loads(ws.recv())
-        ws.close()
-        return resposta
+        return ws_manager.send_and_receive(msg)
     except Exception as e:
         return {"status": "error", "message": f"Falha de conexão: {e}"}
 
@@ -29,14 +20,11 @@ def criar_turma(nome_turma: str, curso_id: str = None, disciplinas_ids: list = N
         }
 
     try:
-        ws = create_connection(WEBSOCKET_URL)
         msg = {
             "action": "criar_turma",
             "nome": nome_turma
         }
-        ws.send(json.dumps(msg))
-        resposta = json.loads(ws.recv())
-        ws.close()
+        resposta = ws_manager.send_and_receive(msg)
         
         if resposta.get("status") == "ok":
             turma_id = resposta["data"]["id"]
@@ -46,15 +34,12 @@ def criar_turma(nome_turma: str, curso_id: str = None, disciplinas_ids: list = N
             # Se o cadastro foi bem sucedido e um curso foi especificado,
             # associa a turma ao curso
             if curso_id:
-                ws = create_connection(WEBSOCKET_URL)
                 msg_curso = {
                     "action": "associar_turma_curso",
                     "id_turma": turma_id,
                     "id_curso": curso_id
                 }
-                ws.send(json.dumps(msg_curso))
-                resp_curso = json.loads(ws.recv())
-                ws.close()
+                resp_curso = ws_manager.send_and_receive(msg_curso)
                 
                 if resp_curso.get("status") == "ok":
                     success_messages.append("associada ao curso")
@@ -64,15 +49,12 @@ def criar_turma(nome_turma: str, curso_id: str = None, disciplinas_ids: list = N
             # Se disciplinas foram especificadas, associa cada uma à turma
             if disciplinas_ids:
                 for disc_id in disciplinas_ids:
-                    ws = create_connection(WEBSOCKET_URL)
                     msg_disc = {
                         "action": "associar_disciplina_turma",
                         "id_disciplina": disc_id,
                         "id_turma": turma_id
                     }
-                    ws.send(json.dumps(msg_disc))
-                    resp_disc = json.loads(ws.recv())
-                    ws.close()
+                    resp_disc = ws_manager.send_and_receive(msg_disc)
                     
                     if resp_disc.get("status") == "ok":
                         continue
@@ -114,15 +96,12 @@ def associar_turma_curso(id_turma: str, id_curso: str):
         }
 
     try:
-        ws = create_connection(WEBSOCKET_URL)
         msg = {
             "action": "associar_turma_curso",
             "id_turma": id_turma,
             "id_curso": id_curso
         }
-        ws.send(json.dumps(msg))
-        resposta = json.loads(ws.recv())
-        ws.close()
+        resposta = ws_manager.send_and_receive(msg)
         
         if resposta.get("status") == "ok":
             resposta["clear_form"] = True
@@ -148,15 +127,12 @@ def atribuir_aluno_turma(id_aluno: str, id_turma: str):
         }
 
     try:
-        ws = create_connection(WEBSOCKET_URL)
         msg = {
             "action": "atribuir_aluno_turma",
             "id_aluno": id_aluno,
             "id_turma": id_turma
         }
-        ws.send(json.dumps(msg))
-        resposta = json.loads(ws.recv())
-        ws.close()
+        resposta = ws_manager.send_and_receive(msg)
         
         if resposta.get("status") == "ok":
             resposta["clear_form"] = True
@@ -182,15 +158,12 @@ def associar_disciplina_turma(id_disciplina: str, id_turma: str):
         }
 
     try:
-        ws = create_connection(WEBSOCKET_URL)
         msg = {
             "action": "associar_disciplina_turma",
             "id_disciplina": id_disciplina,
             "id_turma": id_turma
         }
-        ws.send(json.dumps(msg))
-        resposta = json.loads(ws.recv())
-        ws.close()
+        resposta = ws_manager.send_and_receive(msg)
         
         if resposta.get("status") == "ok":
             resposta["clear_form"] = True

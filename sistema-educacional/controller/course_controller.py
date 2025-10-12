@@ -1,21 +1,12 @@
-import json
-import os
-from websocket import create_connection
-from dotenv import load_dotenv
+from .websocket_manager import WebSocketManager
 
-load_dotenv()
-
-WEBSOCKET_URL = os.getenv("WEBSOCKET_URL") or "wss://d8603a0fc310.ngrok-free.app"
+ws_manager = WebSocketManager()
 
 def listar_cursos():
     """Lista todos os cursos no sistema"""
     try:
-        ws = create_connection(WEBSOCKET_URL)
         msg = {"action": "listar_cursos"}
-        ws.send(json.dumps(msg))
-        resposta = json.loads(ws.recv())
-        ws.close()
-        return resposta
+        return ws_manager.send_and_receive(msg)
     except Exception as e:
         return {"status": "error", "message": f"Falha de conexão: {e}"}
 
@@ -29,14 +20,11 @@ def cadastrar_curso(nome_curso: str):
         }
 
     try:
-        ws = create_connection(WEBSOCKET_URL)
         msg = {
             "action": "cadastrar_curso",
             "nome": nome_curso
         }
-        ws.send(json.dumps(msg))
-        resposta = json.loads(ws.recv())
-        ws.close()
+        resposta = ws_manager.send_and_receive(msg)
         
         if resposta.get("status") == "ok":
             resposta["clear_form"] = True
