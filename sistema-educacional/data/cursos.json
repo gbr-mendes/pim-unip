@@ -4,7 +4,15 @@
     "nome": "An\u00e1lise e Desenvolvimento de Sistemas",
     "disciplinas": [
       "9464",
-      "2544"
+      "2544",
+      "4767"
+    ]
+  },
+  {
+    "id": "9385",
+    "nome": "Fisioterapia",
+    "disciplinas": [
+      "5422"
     ]
   }
 ]

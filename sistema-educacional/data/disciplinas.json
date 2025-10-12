@@ -10,5 +10,17 @@
     "nome": "Estrutura de dados com python",
     "professor_id": "5127",
     "curso_id": "7627"
+  },
+  {
+    "id": "4767",
+    "nome": "Engenharia de Software Agil",
+    "professor_id": "8191",
+    "curso_id": "7627"
+  },
+  {
+    "id": "5422",
+    "nome": "Anatomia",
+    "professor_id": "6670",
+    "curso_id": "9385"
   }
 ]

@@ -54,5 +54,13 @@
     "sobrenome": "Mendes",
     "role": "aluno",
     "id": "6503"
+  },
+  {
+    "username": "john@email.com",
+    "password": "1234",
+    "nome": "John",
+    "sobrenome": "Due",
+    "role": "professor",
+    "id": "6670"
   }
 ]

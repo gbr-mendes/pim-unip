@@ -40,5 +40,24 @@
       "2544",
       "9464"
     ]
+  },
+  {
+    "id": "2159",
+    "nome": "1\u00ba semestre - Turma E",
+    "curso_id": "7627",
+    "alunos": [],
+    "disciplinas": [
+      "2544",
+      "9464"
+    ]
+  },
+  {
+    "id": "7652",
+    "nome": "1 \u00ba semestre - Turma A",
+    "curso_id": "9385",
+    "alunos": [],
+    "disciplinas": [
+      "5422"
+    ]
   }
 ]
