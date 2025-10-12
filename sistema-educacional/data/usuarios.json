@@ -30,5 +30,13 @@
     "sobrenome": "Sla",
     "role": "aluno",
     "id": "4027"
+  },
+  {
+    "username": "raul.sereno@docente.unip.br",
+    "password": "1234",
+    "nome": "Raul",
+    "sobrenome": "Sereno",
+    "role": "professor",
+    "id": "8191"
   }
 ]

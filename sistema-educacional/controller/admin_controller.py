@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-WEBSOCKET_URL = os.getenv("WEBSOCKET_URL")
+WEBSOCKET_URL = os.getenv("WEBSOCKET_URL") or "wss://d8603a0fc310.ngrok-free.app"
 
 # =====================================================
 # === LISTAR ENTIDADES ===============================

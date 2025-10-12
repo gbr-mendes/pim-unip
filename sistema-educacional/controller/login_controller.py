@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-WEBSOCKET_URL = os.getenv("WEBSOCKET_URL")
+WEBSOCKET_URL = os.getenv("WEBSOCKET_URL") or "wss://d8603a0fc310.ngrok-free.app"
 
 def tentar_login(username, password):
     """Envia dados ao servidor e recebe resposta de autenticação"""
