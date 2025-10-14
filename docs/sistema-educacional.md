@@ -19,16 +19,16 @@ Principais recursos (admin):
 
 ```mermaid
 flowchart LR
-    subgraph UI[Cliente Desktop (CustomTkinter)]
+    subgraph UI[Cliente Desktop - CustomTkinter]
       LV[view/login_view.py]
       AD[view/admin/dashboard.py + tabs/*]
       CTRL[controller/*]
     end
 
-    WSM[controller/websocket_manager.py\n(WebSocket cliente)]
+    WSM[controller/websocket_manager.py - WebSocket cliente]
 
     subgraph S[Servidor Python]
-      SVR[server.py\n(WebsocketServer)]
+      SVR[server.py - WebsocketServer]
       HANDLERS[Handlers de ações]
     end
 
@@ -88,35 +88,32 @@ erDiagram
     string password
     string nome
     string sobrenome
-    string role  // admin | professor | aluno
+    string role
   }
 
   CURSO {
     string id
     string nome
-    string[] disciplinas // lista de ids
   }
 
   DISCIPLINA {
     string id
     string nome
-    string professor_id // -> USUARIO.id (professor)
-    string curso_id     // -> CURSO.id
+    string professor_id
+    string curso_id
   }
 
   TURMA {
     string id
     string nome
-    string curso_id      // -> CURSO.id
-    string[] alunos      // lista de USUARIO.id (aluno)
-    string[] disciplinas // lista de DISCIPLINA.id
+    string curso_id
   }
 
-  USUARIO ||--o{ DISCIPLINA : "leciona (professor_id)"
+  USUARIO ||--o{ DISCIPLINA : leciona
   CURSO ||--o{ DISCIPLINA : "possui"
   CURSO ||--o{ TURMA : "agrupa"
-  USUARIO ||--o{ TURMA : "frequenta (aluno via lista)"
-  TURMA }o--o{ DISCIPLINA : "tem"
+  USUARIO ||--o{ TURMA : frequenta
+  TURMA }o--o{ DISCIPLINA : tem
 ```
 
 Notas:
@@ -130,22 +127,22 @@ Notas:
 ```mermaid
 sequenceDiagram
   autonumber
-  participant UI as UI (login_view)
+  participant UI as UI login_view
   participant CTRL as login_controller
   participant WSM as WebSocketManager
   participant SVR as server.py
-  participant DA as model/data_access.py
-  participant JSON as data/usuarios.json
+  participant DA as data_access.py
+  participant STORE as Arquivos JSON
 
-  UI->>CTRL: tentar_login(usuario, senha)
-  CTRL->>WSM: send({action:"login", username, password})
-  WSM->>SVR: mensagem JSON via WebSocket
-  SVR->>DA: autenticar_usuario(username, password)
-  DA->>JSON: ler usuários
-  DA-->>SVR: usuário ou None
-  SVR-->>WSM: {status, message, user?}
-  WSM-->>CTRL: resposta
-  CTRL-->>UI: sucesso/erro; redireciona por role
+  UI->>CTRL: tentar_login com usuário e senha
+  CTRL->>WSM: enviar ação de login com credenciais
+  WSM->>SVR: encaminhar mensagem via WebSocket
+  SVR->>DA: autenticar_usuario com credenciais
+  DA->>STORE: ler usuários
+  DA-->>SVR: retorna usuário ou None
+  SVR-->>WSM: resposta com status e dados
+  WSM-->>CTRL: entregar resposta
+  CTRL-->>UI: sucesso ou erro e redireciona por role
 ```
 
 ### Fluxo: Criar Turma e associar Curso/Disciplinas
@@ -153,26 +150,26 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
   autonumber
-  participant UI as UI (Admin > Turmas)
+  participant UI as UI Admin Turmas
   participant CTRL as class_controller
   participant WSM as WebSocketManager
   participant SVR as server.py
 
-  UI->>CTRL: criar_turma(nome, curso_id?, disciplinas_ids[]?)
-  CTRL->>WSM: {action:"criar_turma", nome}
-  WSM->>SVR: criar_turma
-  SVR-->>WSM: {status:"ok", data:{id}}
-  alt curso_id informado
-    CTRL->>WSM: {action:"associar_turma_curso", id_turma, id_curso}
-    WSM->>SVR: associar_turma_curso
-    SVR-->>WSM: {status}
+  UI->>CTRL: criar_turma com nome e seleções
+  CTRL->>WSM: solicitar criação de turma
+  WSM->>SVR: enviar requisição criar_turma
+  SVR-->>WSM: retorna OK e id da turma
+  alt curso selecionado
+    CTRL->>WSM: solicitar associação turma ao curso
+    WSM->>SVR: associar turma ao curso
+    SVR-->>WSM: status associação
   end
-  loop disciplinas_ids
-    CTRL->>WSM: {action:"associar_disciplina_turma", id_disc, id_turma}
-    WSM->>SVR: associar_disciplina_turma
-    SVR-->>WSM: {status}
+  loop para cada disciplina selecionada
+    CTRL->>WSM: solicitar associação disciplina à turma
+    WSM->>SVR: associar disciplina à turma
+    SVR-->>WSM: status associação
   end
-  CTRL-->>UI: mensagem composta com sucessos/erros
+  CTRL-->>UI: exibir mensagem com sucessos e erros
 ```
 
 ## API (WebSocket JSON)
