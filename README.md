@@ -115,6 +115,8 @@ def carregar_usuarios():
 
 O projeto possui **client** e **server**, ambos precisam estar rodando para que a aplicação funcione corretamente.
 
+Documentação completa do sistema (com diagramas): consulte `docs/sistema-educacional.md`.
+
 ### Passos:
 
 1. Ative o ambiente virtual Python:
