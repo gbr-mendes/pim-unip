@@ -1,0 +1,26 @@
+[
+  {
+    "id": "2001",
+    "modulo_id": "1001",
+    "titulo": "O que é Engenharia de Software?",
+    "resumo": "Nesta aula, vamos explorar os conceitos fundamentais da engenharia de software, suas aplicações e importância no desenvolvimento de sistemas complexos.\n\nTópicos abordados:\n- Definição de engenharia de software\n- Diferenças entre programação e engenharia de software\n- Principais desafios na construção de software\n- Ciclo de vida do desenvolvimento",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "ordem": 1
+  },
+  {
+    "id": "2002",
+    "modulo_id": "1001",
+    "titulo": "Metodologias Ágeis - Visão Geral",
+    "resumo": "Introdução às metodologias ágeis de desenvolvimento de software, princípios e valores do manifesto ágil.\n\nConteúdo:\n- História e contexto das metodologias ágeis\n- Manifesto ágil e seus 4 valores\n- Comparação com metodologias tradicionais\n- Principais frameworks ágeis",
+    "video_url": "https://www.youtube.com/watch?v=o1tj2zJ2Wvg",
+    "ordem": 2
+  },
+  {
+    "id": "2920",
+    "modulo_id": "8309",
+    "titulo": "Processos de Desenvolvimento de Software",
+    "resumo": "Vamos explorar os processos de desnvolvimento de software e como eles evoluiram até os dias de hoje",
+    "video_url": "https://youtu.be/l0qvxPPISuY?si=98sKbmyA5GO4NmxN",
+    "ordem": 1
+  }
+]

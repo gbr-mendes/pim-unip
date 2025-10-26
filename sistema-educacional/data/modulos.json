@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1001",
+    "disciplina_id": "4767",
+    "nome": "Introdução à Engenharia de Software",
+    "descricao": "Conceitos fundamentais da engenharia de software e metodologias ágeis",
+    "ordem": 1
+  },
+  {
+    "id": "8309",
+    "disciplina_id": "8435",
+    "nome": "Introdução a Analise de Sistemas",
+    "descricao": "Vamos explorar os conceitos principais que regem a área de análise de sistemas de software",
+    "ordem": 1
+  }
+]

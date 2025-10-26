@@ -5,7 +5,9 @@ from model.data_access import (
     cadastrar_nova_disciplina, criar_nova_turma, associar_disciplina_curso,
     atribuir_professor_disciplina, associar_turma_curso, atribuir_aluno_turma,
     atribuir_disciplina_turma, carregar_usuarios, carregar_cursos,
-    carregar_disciplinas, carregar_turmas
+    carregar_disciplinas, carregar_turmas, carregar_modulos, carregar_aulas,
+    criar_modulo, atualizar_modulo, excluir_modulo, listar_modulos_disciplina,
+    criar_aula, atualizar_aula, excluir_aula, listar_aulas_modulo, obter_aula
 )
 
 def handle_listar_admins(data):
@@ -63,7 +65,10 @@ def handle_login(data):
             "status": "ok",
             "message": "Login bem-sucedido",
             "user": {
+                "id": usuario["id"],
                 "username": usuario["username"],
+                "nome": usuario["nome"],
+                "sobrenome": usuario["sobrenome"],
                 "role": usuario["role"]
             }
         }
@@ -148,6 +153,78 @@ def handle_associar_disciplina_turma(data):
         return {"status": "ok", "message": "Disciplina associada à turma com sucesso"}
     return {"status": "error", "message": "Erro ao associar disciplina à turma"}
 
+# Handlers para módulos
+def handle_listar_modulos(data):
+    modulos = carregar_modulos()
+    return {"status": "ok", "data": modulos}
+
+def handle_listar_modulos_disciplina(data):
+    modulos = listar_modulos_disciplina(data["disciplina_id"])
+    return {"status": "ok", "data": modulos}
+
+def handle_criar_modulo(data):
+    modulo = criar_modulo(data["disciplina_id"], data["nome"], data.get("descricao", ""))
+    if modulo:
+        return {"status": "ok", "data": modulo, "message": "Módulo criado com sucesso"}
+    return {"status": "error", "message": "Erro ao criar módulo"}
+
+def handle_atualizar_modulo(data):
+    result = atualizar_modulo(data["modulo_id"], data["nome"], data.get("descricao", ""))
+    if result:
+        return {"status": "ok", "message": "Módulo atualizado com sucesso"}
+    return {"status": "error", "message": "Erro ao atualizar módulo"}
+
+def handle_excluir_modulo(data):
+    result = excluir_modulo(data["modulo_id"])
+    if result:
+        return {"status": "ok", "message": "Módulo excluído com sucesso"}
+    return {"status": "error", "message": "Erro ao excluir módulo"}
+
+# Handlers para aulas
+def handle_listar_aulas(data):
+    aulas = carregar_aulas()
+    return {"status": "ok", "data": aulas}
+
+def handle_listar_aulas_modulo(data):
+    aulas = listar_aulas_modulo(data["modulo_id"])
+    return {"status": "ok", "data": aulas}
+
+def handle_criar_aula(data):
+    aula = criar_aula(
+        data["modulo_id"], 
+        data["titulo"], 
+        data["resumo"], 
+        data.get("video_url", ""),
+        data.get("ordem")
+    )
+    if aula:
+        return {"status": "ok", "data": aula, "message": "Aula criada com sucesso"}
+    return {"status": "error", "message": "Erro ao criar aula"}
+
+def handle_atualizar_aula(data):
+    result = atualizar_aula(
+        data["aula_id"], 
+        data["titulo"], 
+        data["resumo"], 
+        data.get("video_url", ""),
+        data.get("ordem")
+    )
+    if result:
+        return {"status": "ok", "message": "Aula atualizada com sucesso"}
+    return {"status": "error", "message": "Erro ao atualizar aula"}
+
+def handle_excluir_aula(data):
+    result = excluir_aula(data["aula_id"])
+    if result:
+        return {"status": "ok", "message": "Aula excluída com sucesso"}
+    return {"status": "error", "message": "Erro ao excluir aula"}
+
+def handle_obter_aula(data):
+    aula = obter_aula(data["aula_id"])
+    if aula:
+        return {"status": "ok", "data": aula}
+    return {"status": "error", "message": "Aula não encontrada"}
+
 # Mapeamento de ações para handlers
 action_handlers = {
     "login": handle_login,
@@ -168,6 +245,19 @@ action_handlers = {
     "listar_cursos": handle_listar_cursos,
     "listar_disciplinas": handle_listar_disciplinas,
     "listar_turmas": handle_listar_turmas,
+    # Módulos
+    "listar_modulos": handle_listar_modulos,
+    "listar_modulos_disciplina": handle_listar_modulos_disciplina,
+    "criar_modulo": handle_criar_modulo,
+    "atualizar_modulo": handle_atualizar_modulo,
+    "excluir_modulo": handle_excluir_modulo,
+    # Aulas
+    "listar_aulas": handle_listar_aulas,
+    "listar_aulas_modulo": handle_listar_aulas_modulo,
+    "criar_aula": handle_criar_aula,
+    "atualizar_aula": handle_atualizar_aula,
+    "excluir_aula": handle_excluir_aula,
+    "obter_aula": handle_obter_aula,
 }
 
 def receber_mensagem(client, server, message):

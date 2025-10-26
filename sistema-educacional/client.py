@@ -42,8 +42,8 @@ def mostrar_login():
     criar_tela_login(root, on_login_sucesso)
 
 def mostrar_dashboard_professor():
-    label = ctk.CTkLabel(root, text="Dashboard do Professor", font=ctk.CTkFont(size=16))
-    label.pack(pady=20)
+    from view.professor.dashboard import criar_dashboard_professor
+    criar_dashboard_professor(root)
 
 def mostrar_dashboard_aluno():
     label = ctk.CTkLabel(root, text="Dashboard do Aluno", font=ctk.CTkFont(size=16))

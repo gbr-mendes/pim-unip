@@ -11,7 +11,7 @@ class WebSocketManager:
     _lock = Lock()
     _ws = None
     
-    WEBSOCKET_URL = os.getenv("WEBSOCKET_URL") or "wss://c85c0b74a2be.ngrok-free.app"
+    WEBSOCKET_URL = os.getenv("WEBSOCKET_URL") or "wss://1d05086087ef.ngrok-free.app"
     
     def __new__(cls):
         with cls._lock:

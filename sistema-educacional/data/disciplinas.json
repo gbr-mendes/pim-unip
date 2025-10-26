@@ -22,5 +22,11 @@
     "nome": "Anatomia",
     "professor_id": "6670",
     "curso_id": "9385"
+  },
+  {
+    "id": "8435",
+    "nome": "Analise de Sistemas",
+    "professor_id": "8191",
+    "curso_id": "7627"
   }
 ]

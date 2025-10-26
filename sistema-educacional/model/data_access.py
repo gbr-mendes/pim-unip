@@ -207,3 +207,144 @@ def atribuir_disciplina_turma(id_disciplina, id_turma):
         turma["disciplinas"].append(id_disciplina)
         return salvar_turmas(turmas)
     return False
+
+# Funções para módulos
+MODULOS_FILE = os.path.join(DATA_DIR, "modulos.json").encode()
+
+def carregar_modulos():
+    """Carrega módulos do arquivo JSON"""
+    try:
+        with open("data/modulos.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+def salvar_modulos(modulos):
+    """Salva módulos no arquivo JSON"""
+    try:
+        with open("data/modulos.json", "w", encoding="utf-8") as f:
+            json.dump(modulos, f, indent=2, ensure_ascii=False)
+        return True
+    except Exception:
+        return False
+
+def criar_modulo(disciplina_id, nome, descricao=""):
+    """Cria um novo módulo"""
+    modulos = carregar_modulos()
+    
+    novo_modulo = {
+        "id": gerar_id(),
+        "disciplina_id": disciplina_id,
+        "nome": nome,
+        "descricao": descricao,
+        "ordem": len([m for m in modulos if m["disciplina_id"] == disciplina_id]) + 1
+    }
+    
+    modulos.append(novo_modulo)
+    
+    if salvar_modulos(modulos):
+        return novo_modulo
+    return None
+
+def atualizar_modulo(modulo_id, nome, descricao=""):
+    """Atualiza um módulo existente"""
+    modulos = carregar_modulos()
+    
+    for modulo in modulos:
+        if modulo["id"] == modulo_id:
+            modulo["nome"] = nome
+            modulo["descricao"] = descricao
+            return salvar_modulos(modulos)
+    
+    return False
+
+def excluir_modulo(modulo_id):
+    """Exclui um módulo e suas aulas"""
+    modulos = carregar_modulos()
+    aulas = carregar_aulas()
+    
+    # Remove o módulo
+    modulos = [m for m in modulos if m["id"] != modulo_id]
+    
+    # Remove aulas do módulo
+    aulas = [a for a in aulas if a["modulo_id"] != modulo_id]
+    
+    return salvar_modulos(modulos) and salvar_aulas(aulas)
+
+def listar_modulos_disciplina(disciplina_id):
+    """Lista módulos de uma disciplina"""
+    modulos = carregar_modulos()
+    return [m for m in modulos if m["disciplina_id"] == disciplina_id]
+
+# Funções para aulas
+AULAS_FILE = os.path.join(DATA_DIR, "aulas.json").encode()
+
+def carregar_aulas():
+    """Carrega aulas do arquivo JSON"""
+    try:
+        with open("data/aulas.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+def salvar_aulas(aulas):
+    """Salva aulas no arquivo JSON"""
+    try:
+        with open("data/aulas.json", "w", encoding="utf-8") as f:
+            json.dump(aulas, f, indent=2, ensure_ascii=False)
+        return True
+    except Exception:
+        return False
+
+def criar_aula(modulo_id, titulo, resumo, video_url="", ordem=None):
+    """Cria uma nova aula"""
+    aulas = carregar_aulas()
+    
+    if ordem is None:
+        ordem = len([a for a in aulas if a["modulo_id"] == modulo_id]) + 1
+    
+    nova_aula = {
+        "id": gerar_id(),
+        "modulo_id": modulo_id,
+        "titulo": titulo,
+        "resumo": resumo,
+        "video_url": video_url,
+        "ordem": ordem
+    }
+    
+    aulas.append(nova_aula)
+    
+    if salvar_aulas(aulas):
+        return nova_aula
+    return None
+
+def atualizar_aula(aula_id, titulo, resumo, video_url="", ordem=None):
+    """Atualiza uma aula existente"""
+    aulas = carregar_aulas()
+    
+    for aula in aulas:
+        if aula["id"] == aula_id:
+            aula["titulo"] = titulo
+            aula["resumo"] = resumo
+            aula["video_url"] = video_url
+            if ordem is not None:
+                aula["ordem"] = ordem
+            return salvar_aulas(aulas)
+    
+    return False
+
+def excluir_aula(aula_id):
+    """Exclui uma aula"""
+    aulas = carregar_aulas()
+    aulas = [a for a in aulas if a["id"] != aula_id]
+    return salvar_aulas(aulas)
+
+def listar_aulas_modulo(modulo_id):
+    """Lista aulas de um módulo"""
+    aulas = carregar_aulas()
+    return [a for a in aulas if a["modulo_id"] == modulo_id]
+
+def obter_aula(aula_id):
+    """Obtém uma aula específica"""
+    aulas = carregar_aulas()
+    return next((a for a in aulas if a["id"] == aula_id), None)
