@@ -23,6 +23,21 @@ def criar_aula(modulo_id, titulo, resumo, video_url="", ordem=None):
     if not titulo.strip():
         return {"status": "error", "message": "Título da aula é obrigatório"}
     
+    if not video_url.strip():
+        return {"status": "error", "message": "URL do vídeo é obrigatória"}
+    
+    # Validação básica de URL de vídeo
+    import re
+    video_patterns = [
+        r'youtube\.com/watch\?v=',
+        r'youtu\.be/',
+        r'vimeo\.com/',
+        r'dailymotion\.com/',
+    ]
+    
+    if not any(re.search(pattern, video_url, re.IGNORECASE) for pattern in video_patterns):
+        return {"status": "error", "message": "URL do vídeo deve ser do YouTube, Vimeo ou Dailymotion"}
+    
     try:
         msg = {
             "action": "criar_aula",
@@ -40,6 +55,21 @@ def atualizar_aula(aula_id, titulo, resumo, video_url="", ordem=None):
     """Atualiza uma aula existente"""
     if not titulo.strip():
         return {"status": "error", "message": "Título da aula é obrigatório"}
+    
+    if not video_url.strip():
+        return {"status": "error", "message": "URL do vídeo é obrigatória"}
+    
+    # Validação básica de URL de vídeo
+    import re
+    video_patterns = [
+        r'youtube\.com/watch\?v=',
+        r'youtu\.be/',
+        r'vimeo\.com/',
+        r'dailymotion\.com/',
+    ]
+    
+    if not any(re.search(pattern, video_url, re.IGNORECASE) for pattern in video_patterns):
+        return {"status": "error", "message": "URL do vídeo deve ser do YouTube, Vimeo ou Dailymotion"}
     
     try:
         msg = {

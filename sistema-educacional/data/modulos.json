@@ -1,16 +1,65 @@
 [
   {
-    "id": "1001",
-    "disciplina_id": "4767",
-    "nome": "Introdução à Engenharia de Software",
-    "descricao": "Conceitos fundamentais da engenharia de software e metodologias ágeis",
-    "ordem": 1
+    "id": "6001",
+    "disciplina_id": "2001",
+    "nome": "Lógica de Programação",
+    "descricao": "Fundamentos da lógica de programação e algoritmos",
+    "sequencia": 1
   },
   {
-    "id": "8309",
-    "disciplina_id": "8435",
-    "nome": "Introdução a Analise de Sistemas",
-    "descricao": "Vamos explorar os conceitos principais que regem a área de análise de sistemas de software",
-    "ordem": 1
+    "id": "6002",
+    "disciplina_id": "2001",
+    "nome": "Sintaxe Python",
+    "descricao": "Sintaxe básica da linguagem Python",
+    "sequencia": 2
+  },
+  {
+    "id": "6003",
+    "disciplina_id": "2002",
+    "nome": "Fundamentos de Banco de Dados",
+    "descricao": "Conceitos básicos de sistemas de gerenciamento de banco de dados",
+    "sequencia": 1
+  },
+  {
+    "id": "6004",
+    "disciplina_id": "2002",
+    "nome": "SQL e Modelagem",
+    "descricao": "Linguagem SQL e técnicas de modelagem de dados",
+    "sequencia": 2
+  },
+  {
+    "id": "6005",
+    "disciplina_id": "2003",
+    "nome": "Introdução à Engenharia de Software",
+    "descricao": "Conceitos fundamentais da engenharia de software",
+    "sequencia": 1
+  },
+  {
+    "id": "7001",
+    "disciplina_id": "3001",
+    "nome": "Sistema Esquelético",
+    "descricao": "Estrutura e função do sistema esquelético humano",
+    "sequencia": 1
+  },
+  {
+    "id": "7002",
+    "disciplina_id": "3001",
+    "nome": "Sistema Muscular",
+    "descricao": "Anatomia e fisiologia do sistema muscular",
+    "sequencia": 2
+  },
+  {
+    "id": "7003",
+    "disciplina_id": "3002",
+    "nome": "Fisiologia Cardiovascular",
+    "descricao": "Funcionamento do sistema cardiovascular",
+    "sequencia": 1
+  },
+  {
+    "id": "7004",
+    "disciplina_id": "3003",
+    "nome": "Biomecânica Humana",
+    "descricao": "Princípios de biomecânica aplicados ao movimento humano",
+    "sequencia": 1
   }
 ]

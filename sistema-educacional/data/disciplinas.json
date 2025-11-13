@@ -1,32 +1,74 @@
 [
   {
-    "id": "9464",
-    "nome": "Banco de dados",
-    "professor_id": "1239",
-    "curso_id": "7627"
-  },
-  {
-    "id": "2544",
-    "nome": "Estrutura de dados com python",
-    "professor_id": "5127",
-    "curso_id": "7627"
-  },
-  {
-    "id": "4767",
-    "nome": "Engenharia de Software Agil",
+    "id": "2001",
+    "nome": "Programação I",
     "professor_id": "8191",
-    "curso_id": "7627"
+    "curso_id": "1001"
   },
   {
-    "id": "5422",
-    "nome": "Anatomia",
+    "id": "2002",
+    "nome": "Banco de Dados",
+    "professor_id": "8191",
+    "curso_id": "1001"
+  },
+  {
+    "id": "2003",
+    "nome": "Engenharia de Software",
     "professor_id": "6670",
-    "curso_id": "9385"
+    "curso_id": "1001"
   },
   {
-    "id": "8435",
-    "nome": "Analise de Sistemas",
+    "id": "2004",
+    "nome": "Estruturas de Dados",
+    "professor_id": "6670",
+    "curso_id": "1001"
+  },
+  {
+    "id": "2005",
+    "nome": "Desenvolvimento Web",
+    "professor_id": "5127",
+    "curso_id": "1001"
+  },
+  {
+    "id": "2006",
+    "nome": "Análise de Sistemas",
+    "professor_id": "5127",
+    "curso_id": "1001"
+  },
+  {
+    "id": "3001",
+    "nome": "Anatomia Humana",
     "professor_id": "8191",
-    "curso_id": "7627"
+    "curso_id": "1002"
+  },
+  {
+    "id": "3002",
+    "nome": "Fisiologia",
+    "professor_id": "6670",
+    "curso_id": "1002"
+  },
+  {
+    "id": "3003",
+    "nome": "Cinesiologia",
+    "professor_id": "5127",
+    "curso_id": "1002"
+  },
+  {
+    "id": "3004",
+    "nome": "Fisioterapia Neurológica",
+    "professor_id": "8191",
+    "curso_id": "1002"
+  },
+  {
+    "id": "3005",
+    "nome": "Fisioterapia Ortopédica",
+    "professor_id": "6670",
+    "curso_id": "1002"
+  },
+  {
+    "id": "3006",
+    "nome": "Fisioterapia Respiratória",
+    "professor_id": "5127",
+    "curso_id": "1002"
   }
 ]

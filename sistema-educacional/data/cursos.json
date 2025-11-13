@@ -1,19 +1,26 @@
 [
   {
-    "id": "7627",
-    "nome": "An\u00e1lise e Desenvolvimento de Sistemas",
+    "id": "1001",
+    "nome": "Análise e Desenvolvimento de Sistemas",
     "disciplinas": [
-      "9464",
-      "2544",
-      "4767",
-      "8435"
+      "2001",
+      "2002",
+      "2003",
+      "2004",
+      "2005",
+      "2006"
     ]
   },
   {
-    "id": "9385",
+    "id": "1002",
     "nome": "Fisioterapia",
     "disciplinas": [
-      "5422"
+      "3001",
+      "3002",
+      "3003",
+      "3004",
+      "3005",
+      "3006"
     ]
   }
 ]

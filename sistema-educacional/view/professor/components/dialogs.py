@@ -239,8 +239,9 @@ class AulaDialog(ctk.CTkToplevel):
         # Campo vídeo
         ctk.CTkLabel(
             main_frame,
-            text="URL do Vídeo (opcional):",
-            font=ctk.CTkFont(size=14)
+            text="URL do Vídeo (obrigatório):*",
+            font=ctk.CTkFont(size=14, weight="bold"),
+            text_color="red"
         ).pack(anchor="w", pady=(0, 5))
         
         video_frame = ctk.CTkFrame(main_frame)
@@ -355,9 +356,14 @@ class AulaDialog(ctk.CTkToplevel):
         resumo = self.resumo_text.get("1.0", "end-1c").strip()
         video_url = self.video_entry.get().strip()
         
-        # Valida URL se fornecida
-        if video_url and not self.is_valid_video_url(video_url):
-            self.show_error("URL do vídeo inválida!")
+        # Vídeo agora é obrigatório
+        if not video_url:
+            self.show_error("URL do vídeo é obrigatória!")
+            return
+        
+        # Valida URL
+        if not self.is_valid_video_url(video_url):
+            self.show_error("URL do vídeo inválida! Use links do YouTube, Vimeo, etc.")
             return
         
         self.result = (titulo, resumo, video_url)

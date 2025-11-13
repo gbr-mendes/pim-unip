@@ -7,7 +7,9 @@ from model.data_access import (
     atribuir_disciplina_turma, carregar_usuarios, carregar_cursos,
     carregar_disciplinas, carregar_turmas, carregar_modulos, carregar_aulas,
     criar_modulo, atualizar_modulo, excluir_modulo, listar_modulos_disciplina,
-    criar_aula, atualizar_aula, excluir_aula, listar_aulas_modulo, obter_aula
+    criar_aula, atualizar_aula, excluir_aula, listar_aulas_modulo, obter_aula,
+    listar_disciplinas_aluno, obter_progresso_aluno, marcar_aula_concluida,
+    obter_estatisticas_aluno, buscar_conteudo_aluno
 )
 
 def handle_listar_admins(data):
@@ -195,7 +197,7 @@ def handle_criar_aula(data):
         data["titulo"], 
         data["resumo"], 
         data.get("video_url", ""),
-        data.get("ordem")
+        data.get("sequencia")
     )
     if aula:
         return {"status": "ok", "data": aula, "message": "Aula criada com sucesso"}
@@ -207,7 +209,7 @@ def handle_atualizar_aula(data):
         data["titulo"], 
         data["resumo"], 
         data.get("video_url", ""),
-        data.get("ordem")
+        data.get("sequencia")
     )
     if result:
         return {"status": "ok", "message": "Aula atualizada com sucesso"}
@@ -224,6 +226,29 @@ def handle_obter_aula(data):
     if aula:
         return {"status": "ok", "data": aula}
     return {"status": "error", "message": "Aula não encontrada"}
+
+# Handlers para funcionalidades do aluno
+def handle_listar_disciplinas_aluno(data):
+    disciplinas = listar_disciplinas_aluno(data["aluno_id"])
+    return {"status": "ok", "data": disciplinas}
+
+def handle_obter_progresso_aluno(data):
+    progresso = obter_progresso_aluno(data["aluno_id"], data.get("disciplina_id"))
+    return {"status": "ok", "data": progresso}
+
+def handle_marcar_aula_concluida(data):
+    result = marcar_aula_concluida(data["aluno_id"], data["aula_id"])
+    if result:
+        return {"status": "ok", "message": "Aula marcada como concluída"}
+    return {"status": "error", "message": "Erro ao marcar aula como concluída"}
+
+def handle_obter_estatisticas_aluno(data):
+    estatisticas = obter_estatisticas_aluno(data["aluno_id"])
+    return {"status": "ok", "data": estatisticas}
+
+def handle_buscar_conteudo_aluno(data):
+    resultados = buscar_conteudo_aluno(data["aluno_id"], data["termo_busca"])
+    return {"status": "ok", "data": resultados}
 
 # Mapeamento de ações para handlers
 action_handlers = {
@@ -258,6 +283,12 @@ action_handlers = {
     "atualizar_aula": handle_atualizar_aula,
     "excluir_aula": handle_excluir_aula,
     "obter_aula": handle_obter_aula,
+    # Funcionalidades do aluno
+    "listar_disciplinas_aluno": handle_listar_disciplinas_aluno,
+    "obter_progresso_aluno": handle_obter_progresso_aluno,
+    "marcar_aula_concluida": handle_marcar_aula_concluida,
+    "obter_estatisticas_aluno": handle_obter_estatisticas_aluno,
+    "buscar_conteudo_aluno": handle_buscar_conteudo_aluno,
 }
 
 def receber_mensagem(client, server, message):

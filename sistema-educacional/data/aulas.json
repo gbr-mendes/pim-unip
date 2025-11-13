@@ -1,26 +1,90 @@
 [
   {
-    "id": "2001",
-    "modulo_id": "1001",
+    "id": "8001",
+    "modulo_id": "6001",
+    "titulo": "O que é Algoritmo?",
+    "resumo": "Introdução aos conceitos de algoritmo e lógica de programação.\n\nTópicos abordados:\n- Definição de algoritmo\n- Características de um bom algoritmo\n- Representação de algoritmos\n- Fluxogramas e pseudocódigo",
+    "video_url": "https://www.youtube.com/watch?v=8mei6uVttho",
+    "sequencia": 1
+  },
+  {
+    "id": "8002",
+    "modulo_id": "6001",
+    "titulo": "Estruturas Condicionais",
+    "resumo": "Aprendendo a tomar decisões em algoritmos.\n\nConteúdo:\n- Estruturas if, else, elif\n- Operadores de comparação\n- Operadores lógicos\n- Exemplos práticos",
+    "video_url": "https://www.youtube.com/watch?v=Ig4QZNpVZYs",
+    "sequencia": 2
+  },
+  {
+    "id": "8003",
+    "modulo_id": "6002",
+    "titulo": "Variáveis e Tipos de Dados",
+    "resumo": "Fundamentos da sintaxe Python: variáveis e tipos de dados.\n\nTópicos:\n- Declaração de variáveis\n- Tipos primitivos (int, float, str, bool)\n- Conversão entre tipos\n- Boas práticas de nomenclatura",
+    "video_url": "https://www.youtube.com/watch?v=u4RS_hPnKLc",
+    "sequencia": 1
+  },
+  {
+    "id": "8004",
+    "modulo_id": "6003",
+    "titulo": "Introdução aos Bancos de Dados",
+    "resumo": "Conceitos básicos sobre sistemas de gerenciamento de banco de dados.\n\nTópicos:\n- O que são bancos de dados\n- Vantagens dos SGBDs\n- Tipos de modelos de dados\n- Arquitetura de um SGBD",
+    "video_url": "https://www.youtube.com/watch?v=Ofktsne-utM",
+    "sequencia": 1
+  },
+  {
+    "id": "8005",
+    "modulo_id": "6004",
+    "titulo": "Comandos SQL Básicos",
+    "resumo": "Introdução à linguagem SQL e comandos básicos para manipulação de dados.\n\nTópicos:\n- SELECT, INSERT, UPDATE, DELETE\n- Cláusulas WHERE, ORDER BY\n- Funções agregadas\n- GROUP BY e HAVING",
+    "video_url": "https://www.youtube.com/watch?v=HXV3zeQKqGY",
+    "sequencia": 1
+  },
+  {
+    "id": "8006",
+    "modulo_id": "6005",
     "titulo": "O que é Engenharia de Software?",
-    "resumo": "Nesta aula, vamos explorar os conceitos fundamentais da engenharia de software, suas aplicações e importância no desenvolvimento de sistemas complexos.\n\nTópicos abordados:\n- Definição de engenharia de software\n- Diferenças entre programação e engenharia de software\n- Principais desafios na construção de software\n- Ciclo de vida do desenvolvimento",
+    "resumo": "Conceitos fundamentais da engenharia de software.\n\nTópicos:\n- Definição de engenharia de software\n- Diferenças entre programação e engenharia\n- Principais desafios\n- Ciclo de vida do desenvolvimento",
     "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    "ordem": 1
+    "sequencia": 1
   },
   {
-    "id": "2002",
-    "modulo_id": "1001",
-    "titulo": "Metodologias Ágeis - Visão Geral",
-    "resumo": "Introdução às metodologias ágeis de desenvolvimento de software, princípios e valores do manifesto ágil.\n\nConteúdo:\n- História e contexto das metodologias ágeis\n- Manifesto ágil e seus 4 valores\n- Comparação com metodologias tradicionais\n- Principais frameworks ágeis",
-    "video_url": "https://www.youtube.com/watch?v=o1tj2zJ2Wvg",
-    "ordem": 2
+    "id": "9001",
+    "modulo_id": "7001",
+    "titulo": "Ossos do Corpo Humano",
+    "resumo": "Estudo detalhado dos ossos que compõem o esqueleto humano.\n\nConteúdo:\n- Classificação dos ossos\n- Principais ossos do corpo\n- Estrutura óssea\n- Funções do sistema esquelético",
+    "video_url": "https://www.youtube.com/watch?v=EXe7zcOUMrI",
+    "sequencia": 1
   },
   {
-    "id": "2920",
-    "modulo_id": "8309",
-    "titulo": "Processos de Desenvolvimento de Software",
-    "resumo": "Vamos explorar os processos de desnvolvimento de software e como eles evoluiram até os dias de hoje",
-    "video_url": "https://youtu.be/l0qvxPPISuY?si=98sKbmyA5GO4NmxN",
-    "ordem": 1
+    "id": "9002",
+    "modulo_id": "7001",
+    "titulo": "Articulações",
+    "resumo": "Tipos e funções das articulações no corpo humano.\n\nTópicos:\n- Classificação das articulações\n- Movimentos articulares\n- Patologias articulares\n- Importância clínica",
+    "video_url": "https://www.youtube.com/watch?v=cHu-8xZ4JOY",
+    "sequencia": 2
+  },
+  {
+    "id": "9003",
+    "modulo_id": "7002",
+    "titulo": "Tipos de Músculos",
+    "resumo": "Classificação e características dos diferentes tipos musculares.\n\nConteúdo:\n- Músculo esquelético\n- Músculo cardíaco\n- Músculo liso\n- Contração muscular",
+    "video_url": "https://www.youtube.com/watch?v=pLjUVDJQU3s",
+    "sequencia": 1
+  },
+  {
+    "id": "9004",
+    "modulo_id": "7003",
+    "titulo": "Coração e Circulação",
+    "resumo": "Anatomia e fisiologia do sistema cardiovascular.\n\nTópicos:\n- Anatomia do coração\n- Ciclo cardíaco\n- Circulação sistêmica e pulmonar\n- Regulação da pressão arterial",
+    "video_url": "https://www.youtube.com/watch?v=RW1_cn2zfSo",
+    "sequencia": 1
+  },
+  {
+    "id": "9005",
+    "modulo_id": "7004",
+    "titulo": "Mecânica do Movimento",
+    "resumo": "Princípios biomecânicos aplicados ao movimento humano.\n\nConteúdo:\n- Leis de Newton aplicadas ao corpo\n- Alavancas no corpo humano\n- Centro de gravidade\n- Análise do movimento",
+    "video_url": "https://www.youtube.com/watch?v=QLhkJPgY8HE",
+    "sequencia": 1
   }
 ]

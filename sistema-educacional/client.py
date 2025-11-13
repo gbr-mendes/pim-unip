@@ -46,8 +46,8 @@ def mostrar_dashboard_professor():
     criar_dashboard_professor(root)
 
 def mostrar_dashboard_aluno():
-    label = ctk.CTkLabel(root, text="Dashboard do Aluno", font=ctk.CTkFont(size=16))
-    label.pack(pady=20)
+    from view.student.dashboard import criar_dashboard_aluno
+    criar_dashboard_aluno(root)
 
 def mostrar_dashboard_admin():
     from view.admin import criar_dashboard_admin

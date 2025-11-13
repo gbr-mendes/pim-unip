@@ -23,6 +23,7 @@ USUARIOS_FILE = os.path.join(DATA_DIR, "usuarios.json").encode()
 CURSOS_FILE = os.path.join(DATA_DIR, "cursos.json").encode()
 DISCIPLINAS_FILE = os.path.join(DATA_DIR, "disciplinas.json").encode()
 TURMAS_FILE = os.path.join(DATA_DIR, "turmas.json").encode()
+PROGRESSO_FILE = os.path.join(DATA_DIR, "progresso.json")
 
 def gerar_id():
     return str(random.randint(1000, 9999))
@@ -237,7 +238,7 @@ def criar_modulo(disciplina_id, nome, descricao=""):
         "disciplina_id": disciplina_id,
         "nome": nome,
         "descricao": descricao,
-        "ordem": len([m for m in modulos if m["disciplina_id"] == disciplina_id]) + 1
+        "sequencia": len([m for m in modulos if m["disciplina_id"] == disciplina_id]) + 1
     }
     
     modulos.append(novo_modulo)
@@ -296,12 +297,12 @@ def salvar_aulas(aulas):
     except Exception:
         return False
 
-def criar_aula(modulo_id, titulo, resumo, video_url="", ordem=None):
+def criar_aula(modulo_id, titulo, resumo, video_url="", sequencia=None):
     """Cria uma nova aula"""
     aulas = carregar_aulas()
     
-    if ordem is None:
-        ordem = len([a for a in aulas if a["modulo_id"] == modulo_id]) + 1
+    if sequencia is None:
+        sequencia = len([a for a in aulas if a["modulo_id"] == modulo_id]) + 1
     
     nova_aula = {
         "id": gerar_id(),
@@ -309,7 +310,7 @@ def criar_aula(modulo_id, titulo, resumo, video_url="", ordem=None):
         "titulo": titulo,
         "resumo": resumo,
         "video_url": video_url,
-        "ordem": ordem
+        "sequencia": sequencia
     }
     
     aulas.append(nova_aula)
@@ -318,7 +319,7 @@ def criar_aula(modulo_id, titulo, resumo, video_url="", ordem=None):
         return nova_aula
     return None
 
-def atualizar_aula(aula_id, titulo, resumo, video_url="", ordem=None):
+def atualizar_aula(aula_id, titulo, resumo, video_url="", sequencia=None):
     """Atualiza uma aula existente"""
     aulas = carregar_aulas()
     
@@ -327,8 +328,8 @@ def atualizar_aula(aula_id, titulo, resumo, video_url="", ordem=None):
             aula["titulo"] = titulo
             aula["resumo"] = resumo
             aula["video_url"] = video_url
-            if ordem is not None:
-                aula["ordem"] = ordem
+            if sequencia is not None:
+                aula["sequencia"] = sequencia
             return salvar_aulas(aulas)
     
     return False
@@ -348,3 +349,176 @@ def obter_aula(aula_id):
     """Obtém uma aula específica"""
     aulas = carregar_aulas()
     return next((a for a in aulas if a["id"] == aula_id), None)
+
+# Funções de progresso
+def carregar_progresso():
+    """Carrega dados de progresso dos alunos"""
+    try:
+        with open(PROGRESSO_FILE, 'r', encoding='utf-8') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError:
+        return []
+
+def salvar_progresso(dados):
+    """Salva dados de progresso dos alunos"""
+    try:
+        with open(PROGRESSO_FILE, 'w', encoding='utf-8') as file:
+            json.dump(dados, file, indent=2, ensure_ascii=False)
+        return True
+    except Exception as e:
+        print(f"Erro ao salvar progresso: {e}")
+        return False
+
+def obter_progresso_aluno(aluno_id, disciplina_id=None):
+    """Obtém progresso de um aluno em uma disciplina específica ou todas"""
+    progresso_list = carregar_progresso()
+    
+    if disciplina_id:
+        # Obter IDs de aulas da disciplina
+        modulos = [m for m in carregar_modulos() if m["disciplina_id"] == disciplina_id]
+        aulas_disciplina = []
+        for modulo in modulos:
+            aulas_modulo = [a for a in carregar_aulas() if a["modulo_id"] == modulo["id"]]
+            aulas_disciplina.extend(aulas_modulo)
+        
+        aulas_ids = [a["id"] for a in aulas_disciplina]
+        return [p for p in progresso_list if p["aluno_id"] == aluno_id and p["aula_id"] in aulas_ids]
+    else:
+        return [p for p in progresso_list if p["aluno_id"] == aluno_id]
+
+def marcar_aula_concluida(aluno_id, aula_id):
+    """Marca uma aula como concluída por um aluno"""
+    progresso_list = carregar_progresso()
+    
+    # Verifica se já existe progresso para esta aula
+    progresso_existente = next((p for p in progresso_list 
+                               if p["aluno_id"] == aluno_id and p["aula_id"] == aula_id), None)
+    
+    if progresso_existente:
+        progresso_existente["concluida"] = True
+        progresso_existente["data_conclusao"] = json.dumps({"timestamp": "now"})
+    else:
+        novo_progresso = {
+            "id": gerar_id(),
+            "aluno_id": aluno_id,
+            "aula_id": aula_id,
+            "concluida": True,
+            "data_conclusao": json.dumps({"timestamp": "now"}),
+            "tempo_gasto": 0
+        }
+        progresso_list.append(novo_progresso)
+    
+    return salvar_progresso(progresso_list)
+
+def obter_estatisticas_aluno(aluno_id):
+    """Obtém estatísticas de progresso do aluno"""
+    # Obter turmas do aluno
+    turmas = carregar_turmas()
+    turmas_aluno = [t for t in turmas if aluno_id in t.get("alunos", [])]
+    
+    # Obter disciplinas das turmas do aluno
+    disciplinas_ids = set()
+    for turma in turmas_aluno:
+        disciplinas_ids.update(turma.get("disciplinas", []))
+    
+    # Contar aulas totais nas disciplinas do aluno
+    modulos = carregar_modulos()
+    aulas = carregar_aulas()
+    aulas_totais = 0
+    
+    for disciplina_id in disciplinas_ids:
+        modulos_disciplina = [m for m in modulos if m["disciplina_id"] == disciplina_id]
+        for modulo in modulos_disciplina:
+            aulas_modulo = [a for a in aulas if a["modulo_id"] == modulo["id"]]
+            aulas_totais += len(aulas_modulo)
+    
+    # Contar progresso do aluno
+    progresso_list = carregar_progresso()
+    progresso_aluno = [p for p in progresso_list if p["aluno_id"] == aluno_id]
+    aulas_concluidas = len([p for p in progresso_aluno if p.get("concluida", False)])
+    
+    return {
+        "total_aulas": aulas_totais,
+        "aulas_concluidas": aulas_concluidas,
+        "aulas_pendentes": aulas_totais - aulas_concluidas,
+        "percentual_conclusao": round((aulas_concluidas / aulas_totais * 100) if aulas_totais > 0 else 0, 1),
+        "disciplinas_matriculadas": len(disciplinas_ids)
+    }
+
+def listar_disciplinas_aluno(aluno_id):
+    """Lista disciplinas em que o aluno está matriculado"""
+    turmas = carregar_turmas()
+    disciplinas = carregar_disciplinas()
+    cursos = carregar_cursos()
+    
+    # Encontrar turmas do aluno
+    turmas_aluno = [t for t in turmas if aluno_id in t.get("alunos", [])]
+    
+    # Obter disciplinas das turmas
+    disciplinas_ids = set()
+    for turma in turmas_aluno:
+        disciplinas_ids.update(turma.get("disciplinas", []))
+    
+    # Montar dados das disciplinas com informações do curso
+    disciplinas_aluno = []
+    for disciplina_id in disciplinas_ids:
+        disciplina = next((d for d in disciplinas if d["id"] == disciplina_id), None)
+        if disciplina:
+            curso = next((c for c in cursos if c["id"] == disciplina.get("curso_id")), None)
+            disciplina_info = disciplina.copy()
+            disciplina_info["curso_nome"] = curso["nome"] if curso else "Curso não encontrado"
+            
+            # Adicionar estatísticas de progresso da disciplina
+            progresso_disciplina = obter_progresso_aluno(aluno_id, disciplina_id)
+            modulos_disciplina = [m for m in carregar_modulos() if m["disciplina_id"] == disciplina_id]
+            aulas_totais = sum(len([a for a in carregar_aulas() if a["modulo_id"] == m["id"]]) for m in modulos_disciplina)
+            aulas_concluidas = len([p for p in progresso_disciplina if p.get("concluida", False)])
+            
+            disciplina_info["progresso"] = {
+                "total_aulas": aulas_totais,
+                "aulas_concluidas": aulas_concluidas,
+                "percentual": round((aulas_concluidas / aulas_totais * 100) if aulas_totais > 0 else 0, 1)
+            }
+            
+            disciplinas_aluno.append(disciplina_info)
+    
+    return disciplinas_aluno
+
+def buscar_conteudo_aluno(aluno_id, termo_busca):
+    """Busca conteúdo nas disciplinas do aluno"""
+    disciplinas_aluno = listar_disciplinas_aluno(aluno_id)
+    modulos = carregar_modulos()
+    aulas = carregar_aulas()
+    
+    resultados = []
+    
+    for disciplina in disciplinas_aluno:
+        # Buscar em módulos
+        modulos_disciplina = [m for m in modulos if m["disciplina_id"] == disciplina["id"]]
+        for modulo in modulos_disciplina:
+            if termo_busca.lower() in modulo["nome"].lower() or termo_busca.lower() in modulo.get("descricao", "").lower():
+                resultados.append({
+                    "tipo": "modulo",
+                    "disciplina": disciplina["nome"],
+                    "titulo": modulo["nome"],
+                    "conteudo": modulo.get("descricao", ""),
+                    "id": modulo["id"]
+                })
+            
+            # Buscar em aulas do módulo
+            aulas_modulo = [a for a in aulas if a["modulo_id"] == modulo["id"]]
+            for aula in aulas_modulo:
+                if (termo_busca.lower() in aula["titulo"].lower() or 
+                    termo_busca.lower() in aula.get("resumo", "").lower()):
+                    resultados.append({
+                        "tipo": "aula",
+                        "disciplina": disciplina["nome"],
+                        "modulo": modulo["nome"],
+                        "titulo": aula["titulo"],
+                        "conteudo": aula.get("resumo", ""),
+                        "id": aula["id"]
+                    })
+    
+    return resultados

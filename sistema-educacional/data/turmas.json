@@ -1,63 +1,28 @@
 [
   {
-    "id": "3154",
-    "nome": "1\u00ba semestre - Turma A",
-    "curso_id": "7627",
+    "id": "4001",
+    "nome": "ADS - 1° Semestre",
+    "curso_id": "1001",
     "alunos": [
-      "4429",
-      "6503"
+      "5001"
     ],
     "disciplinas": [
-      "9464"
+      "2001",
+      "2002",
+      "2003"
     ]
   },
   {
-    "id": "7029",
-    "nome": "1\u00ba semestre - Turma B",
-    "curso_id": "7627",
-    "alunos": [],
+    "id": "4002",
+    "nome": "Fisioterapia - 1° Semestre",
+    "curso_id": "1002",
+    "alunos": [
+      "5002"
+    ],
     "disciplinas": [
-      "9464",
-      "2544"
-    ]
-  },
-  {
-    "id": "2172",
-    "nome": "1\u00ba semestre - Turma C",
-    "curso_id": "7627",
-    "alunos": [],
-    "disciplinas": [
-      "9464",
-      "2544"
-    ]
-  },
-  {
-    "id": "6136",
-    "nome": "1\u00ba semestre - Turma D",
-    "curso_id": "7627",
-    "alunos": [],
-    "disciplinas": [
-      "2544",
-      "9464"
-    ]
-  },
-  {
-    "id": "2159",
-    "nome": "1\u00ba semestre - Turma E",
-    "curso_id": "7627",
-    "alunos": [],
-    "disciplinas": [
-      "2544",
-      "9464"
-    ]
-  },
-  {
-    "id": "7652",
-    "nome": "1\u00ba semestre - Turma A",
-    "curso_id": "9385",
-    "alunos": [],
-    "disciplinas": [
-      "5422"
+      "3001",
+      "3002",
+      "3003"
     ]
   }
 ]
